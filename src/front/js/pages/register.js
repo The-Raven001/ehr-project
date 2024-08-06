@@ -6,7 +6,7 @@ export const Register = () => {
     return(
         <>
             <div>
-                
+                soy el login
             </div>
         </>
     )
