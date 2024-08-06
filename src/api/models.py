@@ -113,3 +113,22 @@ class Patient(db.Model):
 
     def __repr__(self):
         return f'<Patient {self.id}>'
+
+
+class Media(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(300))
+    patient_id = db.Column(db.Integer, db.ForeignKey("patient.id"))
+    patient = db.relationship(Patient)
+
+    def serialize(self):
+        return{
+            "id": self.id,
+            "url": self.url,
+            "patient id": self.patient_id
+        }
+
+    def __repr__(self):
+        return{
+            f"<Media {self.id}>"
+        }
