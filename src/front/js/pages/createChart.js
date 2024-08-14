@@ -6,51 +6,61 @@ export const CreateChart = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { store, actions } = useContext(Context);
+  const [selectedGender, setSelectedGender] = useState("Select Gender");
   const [inputValue, setInputValue] = useState({
     name: "",
+    middleName: "",
     lastName: "",
+    address: "",
+    phone: "",
     email: "",
-    password: "",
+    dob: "",
+    provider: "",
+    pharmacyName: "",
+    pharmacyAddress: "",
+    nameOfInsurance: "",
+    insuranceId: "",
+    coverageStartDate: "",
+    coverageEndDate: "",
   });
 
   function handleChange(event) {
     setInputValue({ ...inputValue, [event.target.name]: event.target.value });
   }
 
+  function handleGenderSelect(gender) {
+    setSelectedGender(gender);
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     if (
       inputValue.name == "" ||
-      inputValue.email == "" ||
-      inputValue.password == ""
+      inputValue.lastName == "" ||
+      inputValue.address == "" ||
+      inputValue.phone == "" ||
+      inputValue.dob == ""
     ) {
-      alert("the inputs can not be empty");
+      alert("Some inputs can not be empty");
       return;
     }
-    if (!params.id) {
-      actions.addContact(inputValue);
-      navigate("/");
-    } else {
-      actions.editContact(inputValue);
-      navigate("/");
+    if (selectedGender == "Select Gender") {
+      alert("Please select a gender");
     }
   }
-  useEffect(() => {
-    if (params.id && store.contacts.length > 0) {
-      setInputValue(store.contacts.find((item) => item.id == params.id));
-    }
-  }, [params.id, store.contacts]);
+
   return (
-    <div>
+    <div className="">
       <h1 className="text-center text-secondary">Add new patient</h1>
-      <div className="d-flex border border-3 maindiv">
-        <form
-          action=""
-          onSubmit={handleSubmit}
-          className="container w-25 border border-3 maindiv mt-5"
-        >
-          <h3 className="mt-3">Demographics:</h3>
-          <div>
+      <form
+        action=""
+        onSubmit={handleSubmit}
+        className="container w-50 border border-3 maindiv mt-5 mb-3"
+      >
+        <h3 className="mt-3">Demographics:</h3>
+
+        <div className="d-flex row">
+          <div className="col-4">
             <label
               htmlFor=""
               className="form-label text-secondary d-flex justify-content-start"
@@ -66,7 +76,7 @@ export const CreateChart = () => {
             />
           </div>
 
-          <div>
+          <div className="col-4">
             <label
               htmlFor=""
               className="form-label text-secondary d-flex justify-content-start"
@@ -75,14 +85,14 @@ export const CreateChart = () => {
             </label>
             <input
               name="lastName"
-              value={inputValue.lastName}
+              value={inputValue.middleName}
               onChange={(event) => handleChange(event)}
               type="text"
               className="form-control input-back"
             />
           </div>
 
-          <div>
+          <div className="col-4">
             <label
               htmlFor=""
               className="form-label text-secondary d-flex justify-content-start"
@@ -97,72 +107,106 @@ export const CreateChart = () => {
               className="form-control input-back"
             />
           </div>
+        </div>
 
-          <div>
+        <div className="row">
+          <div className="col-10">
             <label
               htmlFor=""
               className="form-label text-secondary d-flex justify-content-start"
             >
               Address:
             </label>
-            <input
-              name="lastName"
-              value={inputValue.lastName}
+            <textarea
+              name="address"
+              value={inputValue.address}
               onChange={(event) => handleChange(event)}
               type="text"
               className="form-control input-back"
             />
           </div>
+        </div>
 
-          <div>
-            <label
-              htmlFor=""
-              className="form-label text-secondary d-flex justify-content-start"
-            >
-              Phone number:
-            </label>
-            <input
-              name="lastName"
-              value={inputValue.lastName}
-              onChange={(event) => handleChange(event)}
-              type="number"
-              className="form-control input-back"
-            />
+        <div>
+          <div className="d-flex row">
+            <div className="col-6">
+              <label
+                htmlFor=""
+                className="form-label text-secondary d-flex justify-content-start"
+              >
+                Phone number:
+              </label>
+              <input
+                name="phone"
+                value={inputValue.phone}
+                onChange={(event) => handleChange(event)}
+                type="number"
+                className="form-control input-back"
+              />
+            </div>
+
+            <div className="col-6">
+              <label
+                htmlFor=""
+                className="form-label text-secondary d-flex justify-content-start"
+              >
+                Email:
+              </label>
+              <input
+                name="email"
+                value={inputValue.email}
+                onChange={(event) => handleChange(event)}
+                type="email"
+                className="form-control input-back"
+              />
+            </div>
           </div>
+        </div>
 
-          <div>
-            <label
-              htmlFor=""
-              className="form-label text-secondary d-flex justify-content-start"
-            >
-              Email:
-            </label>
-            <input
-              name="email"
-              value={inputValue.email}
-              onChange={(event) => handleChange(event)}
-              type="email"
-              className="form-control input-back"
-            />
+        <div className="d-flex row">
+          <div className="col-3">
+            Gender:
+            <div class="dropdown mt-2 me-4">
+              <button
+                class="btn btn-secondary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {selectedGender}
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <button
+                    class="dropdown-item"
+                    type="button"
+                    onClick={() => handleGenderSelect("Female")}
+                  >
+                    Female
+                  </button>
+                </li>
+                <li>
+                  <button
+                    class="dropdown-item"
+                    type="button"
+                    onClick={() => handleGenderSelect("Male")}
+                  >
+                    Male
+                  </button>
+                </li>
+                <li>
+                  <button
+                    class="dropdown-item"
+                    type="button"
+                    onClick={() => handleGenderSelect("Unspecified")}
+                  >
+                    Unspecified
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
-
-          <div>
-            <label
-              htmlFor=""
-              className="form-label text-secondary d-flex justify-content-start"
-            >
-              Gender:
-            </label>
-            <input
-              name="lastName"
-              value={inputValue.lastName}
-              onChange={(event) => handleChange(event)}
-              type="text"
-              className="form-control input-back"
-            />
-          </div>
-
-          <div>
+          <div className="col-4">
             <label
               htmlFor=""
               className="form-label text-secondary d-flex justify-content-start"
@@ -170,15 +214,15 @@ export const CreateChart = () => {
               Date of birth:
             </label>
             <input
-              name="lastName"
-              value={inputValue.lastName}
+              name="dob"
+              value={inputValue.dob}
               onChange={(event) => handleChange(event)}
               type="date"
               className="form-control input-back"
             />
           </div>
 
-          <div className="mb-4">
+          <div className="col-4">
             <label
               htmlFor=""
               className="form-label text-secondary d-flex justify-content-start"
@@ -187,127 +231,130 @@ export const CreateChart = () => {
             </label>
             <input
               name="provider"
-              value={inputValue.lastName}
+              value={inputValue.provider}
               onChange={(event) => handleChange(event)}
               type="text"
               className="form-control input-back"
             />
           </div>
-        </form>
+        </div>
 
-        <form className="container w-25 border border-3 maindiv my-5">
-          <h3>Pharmacy details</h3>
+        <div>
+          <h3 className="mt-3">Pharmacy details</h3>
 
-          <div>
-            <label
-              htmlFor=""
-              className="form-label text-secondary d-flex justify-content-start"
-            >
-              Name of pharmacy
-            </label>
-            <input
-              name="pharmacy"
-              value={inputValue.lastName}
-              onChange={(event) => handleChange(event)}
-              type="text"
-              className="form-control input-back"
-            />
+          <div className="row">
+            <div className="col-6">
+              <label
+                htmlFor=""
+                className="form-label text-secondary d-flex justify-content-start col-6"
+              >
+                Name of pharmacy:
+              </label>
+              <input
+                name="pharmacy"
+                value={inputValue.pharmacyName}
+                onChange={(event) => handleChange(event)}
+                type="text"
+                className="form-control input-back"
+              />
+            </div>
+
+            <div className="col-6">
+              <label
+                htmlFor=""
+                className="form-label text-secondary d-flex justify-content-start"
+              >
+                Pharmacy's address:
+              </label>
+              <textarea
+                name="pharmacyAddress"
+                value={inputValue.pharmacyAddress}
+                onChange={(event) => handleChange(event)}
+                type="text"
+                className="form-control input-back"
+              />
+            </div>
           </div>
 
-          <div className="mb-3">
-            <label
-              htmlFor=""
-              className="form-label text-secondary d-flex justify-content-start"
-            >
-              Pharmacy's address:
-            </label>
-            <input
-              name="pharmacy_address"
-              value={inputValue.lastName}
-              onChange={(event) => handleChange(event)}
-              type="text"
-              className="form-control input-back"
-            />
-          </div>
-        </form>
-
-        <form className="container w-25 border border-3 maindiv my-5">
           <h3>Insurance details</h3>
 
-          <div>
-            <label
-              htmlFor=""
-              className="form-label text-secondary d-flex justify-content-start"
-            >
-              Name of Insurance:
-            </label>
-            <input
-              name="pharmacy_address"
-              value={inputValue.lastName}
-              onChange={(event) => handleChange(event)}
-              type="text"
-              className="form-control input-back"
-            />
+          <div className="flex row">
+            <div className="col-6">
+              <label
+                htmlFor=""
+                className="form-label text-secondary d-flex justify-content-start"
+              >
+                Name of Insurance:
+              </label>
+              <input
+                name="NameOfInsurance"
+                value={inputValue.nameOfInsurance}
+                onChange={(event) => handleChange(event)}
+                type="text"
+                className="form-control input-back"
+              />
+            </div>
+
+            <div className="col-6">
+              <label
+                htmlFor=""
+                className="form-label text-secondary d-flex justify-content-start"
+              >
+                Insurance ID:
+              </label>
+              <input
+                name="insuranceId"
+                value={inputValue.insuranceId}
+                onChange={(event) => handleChange(event)}
+                type="text"
+                className="form-control input-back"
+              />
+            </div>
           </div>
 
-          <div>
-            <label
-              htmlFor=""
-              className="form-label text-secondary d-flex justify-content-start"
-            >
-              Insurance ID:
-            </label>
-            <input
-              name="pharmacy_address"
-              value={inputValue.lastName}
-              onChange={(event) => handleChange(event)}
-              type="text"
-              className="form-control input-back"
-            />
-          </div>
+          <div className="row">
+            <div className="col-6">
+              <label
+                htmlFor=""
+                className="form-label text-secondary d-flex justify-content-start"
+              >
+                Coverage start date:
+              </label>
+              <input
+                name="coverageStart"
+                value={inputValue.coverageStartDate}
+                onChange={(event) => handleChange(event)}
+                type="date"
+                className="form-control input-back"
+              />
+            </div>
 
-          <div>
-            <label
-              htmlFor=""
-              className="form-label text-secondary d-flex justify-content-start"
-            >
-              Coverage start date:
-            </label>
-            <input
-              name="coverage_start"
-              value={inputValue.lastName}
-              onChange={(event) => handleChange(event)}
-              type="date"
-              className="form-control input-back"
-            />
+            <div className="col-6">
+              <label
+                htmlFor=""
+                className="form-label text-secondary d-flex justify-content-start"
+              >
+                Coverage end date:
+              </label>
+              <input
+                name="coverageEnd"
+                value={inputValue.coverageEndDate}
+                onChange={(event) => handleChange(event)}
+                type="date"
+                className="form-control input-back"
+              />
+            </div>
           </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor=""
-              className="form-label text-secondary d-flex justify-content-start"
-            >
-              Coverage end date:
-            </label>
-            <input
-              name="coverage_end"
-              value={inputValue.lastName}
-              onChange={(event) => handleChange(event)}
-              type="date"
-              className="form-control input-back"
-            />
-          </div>
-        </form>
-      </div>
-
-      <div className="d-flex justify-content-center">
-        <button
-          type="submit"
-          className="btn btn-dark w-25 mt-3 mb-3 saveButton"
-        >
-          Create
-        </button>
-      </div>
+        </div>
+        <div className="d-flex justify-content-center">
+          <button
+            type="submit"
+            className="btn btn-dark w-50 mt-3 mb-3 saveButton"
+          >
+            Create
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
