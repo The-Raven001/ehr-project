@@ -11,6 +11,7 @@ import { Search } from "./pages/searchChart";
 
 import injectContext from "./store/appContext";
 
+import { Register } from "./pages/register";
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 
@@ -30,6 +31,7 @@ const Layout = () => {
           <Navbar />
           <Routes>
             <Route element={<Home />} path="/" />
+            <Route element={<Register />} path="/register" />
             <Route element={<Demo />} path="/demo" />
             <Route element={<CreateChart />} path="/create-chart" />
             <Route element={<Login />} path="/login" />
