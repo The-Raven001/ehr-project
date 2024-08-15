@@ -5,11 +5,38 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Patient, Office, Media
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
+
+@api.route('/login', methods=['POST'])
+def handle_login():
+    data = request.get_json()
+    user = User.query.filter_by(email=data.get('email')).first()
+    if not user:
+        return {"error": "Invalid email"}, 401
+    if user.password != data.get('password'):
+        return {"error": "Invalid password"}, 401
+    access_token = create_access_token(identity=user.id)
+    return {"access_token": access_token}, 200
+
+@api.route('/register', methods=['POST'])
+def handle_register():
+    data = request.get_json()
+    new_user = User(
+        name=data.get('name'),
+        last_name=data.get('last_name'),
+        email=data.get('email'),
+        password=data.get('password'),
+        office_id=data.get('office_id'),
+        role=data.get('role')
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    return new_user.serialize(), 201
 
 
 @api.route('/hello', methods=['POST', 'GET'])
@@ -22,6 +49,7 @@ def handle_hello():
     return jsonify(response_body), 200
 
 @api.route('/users', methods=['GET', 'POST'])
+@jwt_required()
 def handle_users():
     if request.method == 'GET':
         users = User.query.all()
@@ -41,6 +69,7 @@ def handle_users():
         return new_user.serialize(), 201
 
 @api.route('/users/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required()
 def handle_user(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -66,6 +95,7 @@ def handle_user(user_id):
         return {"message": "User deleted"}, 200
 
 @api.route('/patients', methods=['GET', 'POST'])
+@jwt_required()
 def handle_patients():
     if request.method == 'GET':
         patients = Patient.query.all()
@@ -99,6 +129,7 @@ def handle_patients():
         return new_patient.serialize(), 201
 
 @api.route('/patients/<int:patient_id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required()
 def handle_patient(patient_id):
     patient = Patient.query.get(patient_id)
     if not patient:
@@ -138,6 +169,7 @@ def handle_patient(patient_id):
         return {"message": "Patient deleted"}, 200
 
 @api.route('/offices', methods=['GET', 'POST'])
+@jwt_required()
 def handle_offices():
     if request.method == 'GET':
         offices = Office.query.all()
@@ -150,6 +182,7 @@ def handle_offices():
         return new_office.serialize(), 201
 
 @api.route('/offices/<int:office_id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required()
 def handle_office(office_id):
     office = Office.query.get(office_id)
     if not office:
@@ -169,6 +202,7 @@ def handle_office(office_id):
         return {"message": "Office deleted"}, 200
 
 @api.route('/medias', methods=['GET', 'POST'])
+@jwt_required()
 def handle_medias():
     if request.method == 'GET':
         medias = Media.query.all()
@@ -184,6 +218,7 @@ def handle_medias():
         return new_media.serialize(), 201
 
 @api.route('/medias/<int:media_id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required()
 def handle_media(media_id):
     media = Media.query.get(media_id)
     if not media:
