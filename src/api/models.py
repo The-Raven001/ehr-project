@@ -75,7 +75,7 @@ class Patient(db.Model):
     name_of_insurance = db.Column(db.String(100))
     subscriber_id = db.Column(db.String(50))
     subscription_start_date = db.Column(Date, nullable=False)
-    subscription_end_date = db.Column(Date, nullable=False)
+    subscription_end_date = db.Column(Date)
     financial_class_of_insurance = db.Column(SqlEnum(FinancialClass), nullable=False)
 
 #Pharmacy
