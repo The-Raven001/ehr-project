@@ -1,15 +1,14 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
-import rigoImageUrl from "../../img/rigo-baby.jpg";
 import "../../styles/home.css";
-import { Register } from "./register";
+import { Login } from "./login";
 
 export const Home = () => {
-	const { store, actions } = useContext(Context);
+  const { store, actions } = useContext(Context);
 
-	return (
-		<div className="text-center mt-5">
-			<Register></Register>
-		</div>
-	);
+  return (
+    <div className="text-center mt-5">
+      <Login></Login>
+    </div>
+  );
 };

@@ -5,13 +5,15 @@ import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
+
 import { CreateChart } from "./pages/createChart";
+import { SignUp } from "./pages/signUp";
+import { EditChart } from "./pages/editChart";
 import { Login } from "./pages/login";
 import { Search } from "./pages/searchChart";
 
 import injectContext from "./store/appContext";
 
-import { Register } from "./pages/register";
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 
@@ -31,9 +33,10 @@ const Layout = () => {
           <Navbar />
           <Routes>
             <Route element={<Home />} path="/" />
-            <Route element={<Register />} path="/register" />
+            <Route element={<SignUp />} path="/signup" />
             <Route element={<Demo />} path="/demo" />
             <Route element={<CreateChart />} path="/create-chart" />
+            <Route element={<EditChart />} path="/edit-chart" />
             <Route element={<Login />} path="/login" />
             <Route element={<Search />} path="/search" />
             <Route element={<h1>Not found!</h1>} />

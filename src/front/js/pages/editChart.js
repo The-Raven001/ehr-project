@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
-export const CreateChart = () => {
+export const EditChart = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { store, actions } = useContext(Context);
@@ -22,7 +22,6 @@ export const CreateChart = () => {
     insuranceId: "",
     coverageStartDate: "",
     coverageEndDate: "",
-    gender: selectedGender,
   });
 
   function handleChange(event) {
@@ -52,7 +51,7 @@ export const CreateChart = () => {
 
   return (
     <div className="">
-      <h1 className="text-center text-secondary">Add new patient</h1>
+      <h1 className="text-center text-secondary">Edit chart</h1>
       <form
         action=""
         onSubmit={handleSubmit}
@@ -349,10 +348,10 @@ export const CreateChart = () => {
         </div>
         <div className="d-flex justify-content-center">
           <button
+            className="btn btn-danger w-50 mt-3 mb-3 saveButton"
             type="submit"
-            className="btn btn-dark w-50 mt-3 mb-3 saveButton"
           >
-            Create
+            Delete Chart
           </button>
         </div>
       </form>
