@@ -87,7 +87,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
       login: async ({ email, password }) => {
         try {
-          const response = await fetch(process.env.BACKEND_URL + "/api/login", {
+          const response = await fetch(process.env.BACKEND_URL + "api/login", {
             method: "POST",
             headers: { "Content-type": "application/json" },
             body: JSON.stringify({
@@ -99,12 +99,33 @@ const getState = ({ getStore, getActions, setStore }) => {
           if (!response.ok) {
             throw new Error("There was an error while trying to log you in.");
           }
-
+          const data = await response.json();
           console.log("Logged in!");
+          setStore({ token: data.access_token });
+          localStorage.setItem("token", data.access_token);
           return true;
         } catch (error) {
           console.log("Error in login", error);
           return false;
+        }
+      },
+      logout: () => {
+        localStorage.removeItem("token");
+        setStore({ token: null, user: null });
+      },
+      getUser: async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(process.env.BACKEND_URL + "/api/users", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          console.log(data);
+          setStore({ user: data });
+        } catch (error) {
+          console.log("Error getting user", error);
         }
       },
     },

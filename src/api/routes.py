@@ -61,7 +61,7 @@ def handle_login():
     if user.password != data.get('password'):
         return {"error": "Invalid password"}, 401
     access_token = create_access_token(identity=user.id)
-    return {"access_token": access_token}, 200
+    return jsonify(access_token=access_token), 200
 
 @api.route('/register', methods=['POST'])
 def handle_register():
@@ -88,35 +88,16 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-@api.route('/users', methods=['GET', 'POST'])
+@api.route('/users', methods=['GET', 'PUT', 'DELETE'])
 @jwt_required()
-def handle_users():
-    if request.method == 'GET':
-        users = User.query.all()
-        return jsonify([user.serialize() for user in users]), 200
-    if request.method == 'POST':
-        data = request.get_json()
-        new_user = User(
-            name=data.get('name'),
-            last_name=data.get('last_name'),
-            email=data.get('email'),
-            password=data.get('password'),
-            office_id=data.get('office_id'),
-            role=data.get('role')
-        )
-        db.session.add(new_user)
-        db.session.commit()
-        return new_user.serialize(), 201
-
-@api.route('/users/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
-@jwt_required()
-def handle_user(user_id):
+def handle_user():
+    user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
         return {"error": "User not found"}, 404
 
     if request.method == 'GET':
-        return user.serialize(), 200
+        return jsonify(user.serialize()), 200
 
     if request.method == 'PUT':
         data = request.get_json()
