@@ -51,13 +51,13 @@ export const CreateChart = () => {
   }
 
   return (
-    <div className="">
-      <h1 className="text-center text-secondary">Add new patient</h1>
+    <div>
       <form
         action=""
         onSubmit={handleSubmit}
-        className="container w-50 border border-3 maindiv mt-5 mb-3"
+        className="container w-50 border border-3 maindiv mt-5 mb-3 bg-light"
       >
+        <h1 className="text-center text-secondary bg">Add new patient</h1>
         <h3 className="mt-3">Demographics:</h3>
 
         <div className="d-flex row">
@@ -354,6 +354,11 @@ export const CreateChart = () => {
           >
             Create
           </button>
+        </div>
+        <div className="d-flex justify-content-center mb-2">
+          <Link to="/search">
+            <span>Go back</span>
+          </Link>
         </div>
       </form>
     </div>

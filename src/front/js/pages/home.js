@@ -6,9 +6,5 @@ import { Login } from "./login";
 export const Home = () => {
   const { store, actions } = useContext(Context);
 
-  return (
-    <div className="text-center mt-5">
-      <Login></Login>
-    </div>
-  );
+  return <Login></Login>;
 };

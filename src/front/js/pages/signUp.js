@@ -1,15 +1,17 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const SignUp = () => {
-  const params = useParams();
   const navigate = useNavigate();
-  const { store, actions } = useContext(Context);
+  const { actions } = useContext(Context);
   const [inputValue, setInputValue] = useState({
+    name_office: "",
+    address: "",
+    name: "",
+    last_name: "",
     email: "",
     password: "",
-    office_key: "",
   });
 
   function handleChange(event) {
@@ -18,136 +20,124 @@ export const SignUp = () => {
 
   async function handleSubmit(event) {
     event.preventDefault();
+
     if (
-      inputValue.nameFacility == "" ||
-      inputValue.address == "" ||
-      inputValue.adminName == "" ||
-      inputValue.adminLastName == "" ||
-      inputValue.email == "" ||
-      inputValue.password == ""
+      inputValue.name_office === "" ||
+      inputValue.address === "" ||
+      inputValue.name === "" ||
+      inputValue.last_name === "" ||
+      inputValue.email === "" ||
+      inputValue.password === ""
     ) {
-      alert("the inputs can not be empty");
+      alert("The inputs cannot be empty");
       return;
     }
-    if (!params.id) {
-      actions.addContact(inputValue);
-      navigate("/");
+
+    const success = await actions.signUp({
+      name_office: inputValue.name_office,
+      address: inputValue.address,
+      name: inputValue.name,
+      last_name: inputValue.last_name,
+      email: inputValue.email,
+      password: inputValue.password,
+    });
+
+    if (success) {
+      navigate("/login");
     } else {
-      actions.editContact(inputValue);
-      navigate("/");
+      alert("There was a problem creating your account.");
     }
   }
-  useEffect(() => {
-    if (params.id && store.contacts.length > 0) {
-      setInputValue(store.contacts.find((item) => item.id == params.id));
-    }
-  }, [params.id, store.contacts]);
+
   return (
-    <div className="container w-25 border border-3 mt-5 maindiv">
-      <form action="" onSubmit={handleSubmit}>
+    <div className="container w-25 border border-3 mt-5 maindiv bg bg-light">
+      <form onSubmit={handleSubmit}>
         <h1 className="text-center text-secondary">Signup</h1>
         <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
-            Name Of Facility
+          <label className="form-label text-secondary d-flex justify-content-start">
+            Name Of Facility <span className="text text-danger">*</span>
           </label>
           <input
-            name="nameFacility"
-            value={inputValue.nameFacility}
-            onChange={(event) => handleChange(event)}
+            name="name_office"
+            value={inputValue.name_office}
+            onChange={handleChange}
             type="text"
             className="form-control input-back"
           />
         </div>
         <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
-            Address
+          <label className="form-label text-secondary d-flex justify-content-start">
+            Address <span className="text text-danger">*</span>
           </label>
           <input
-            name="Address"
+            name="address"
             value={inputValue.address}
-            onChange={(event) => handleChange(event)}
+            onChange={handleChange}
             type="text"
             className="form-control input-back"
           />
         </div>
         <h3 className="text-secondary mt-3">Admin user</h3>
         <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
-            Name
+          <label className="form-label text-secondary d-flex justify-content-start">
+            Name <span className="text text-danger">*</span>
           </label>
           <input
             name="name"
-            value={inputValue.adminName}
-            onChange={(event) => handleChange(event)}
+            value={inputValue.name}
+            onChange={handleChange}
             type="text"
             className="form-control input-back"
           />
         </div>
-
         <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
-            Last Name
+          <label className="form-label text-secondary d-flex justify-content-start">
+            Last Name <span className="text text-danger">*</span>
           </label>
           <input
-            name="lastName"
-            value={inputValue.adminLastName}
-            onChange={(event) => handleChange(event)}
+            name="last_name"
+            value={inputValue.last_name}
+            onChange={handleChange}
             type="text"
             className="form-control input-back"
           />
         </div>
-
         <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
-            Email
+          <label className="form-label text-secondary d-flex justify-content-start">
+            Email <span className="text text-danger">*</span>
           </label>
           <input
             name="email"
             value={inputValue.email}
-            onChange={(event) => handleChange(event)}
+            onChange={handleChange}
             type="email"
             className="form-control input-back"
           />
         </div>
-
         <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
-            Password
+          <label className="form-label text-secondary d-flex justify-content-start">
+            Password <span className="text text-danger">*</span>
           </label>
           <input
             name="password"
             value={inputValue.password}
-            onChange={(event) => handleChange(event)}
+            onChange={handleChange}
             type="password"
             className="form-control input-back"
           />
         </div>
-
         <div className="d-flex justify-content-center">
           <button
             type="submit"
-            className="btn btn-dark w-50 mt-3 mb-3 saveButton"
+            className="btn btn-dark w-50 mt-3 mb-1 saveButton"
           >
             Create account
           </button>
+        </div>
+        <div className="d-flex justify-content-center mb-2">
+          <Link to="/login">
+            <span>Already have an account?</span>
+          </Link>
         </div>
       </form>
     </div>

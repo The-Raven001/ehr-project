@@ -6,7 +6,16 @@
     on that page only (the ones not reused in other pages).
 */
 
+body {
+  background-image: url("https://wallpapers.com/images/featured/black-wuuaobghtdllhliu.jpg");
+}
+
 .maindiv,
 .saveButton {
   border-radius: 15px;
+}
+
+.saveButton:hover {
+  background-color: white;
+  color: black;
 }

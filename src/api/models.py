@@ -24,13 +24,17 @@ class FinancialClass(PyEnum):
 
 class Office(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    address = db.Column(db.String(70), nullable=False)
 
     def __repr__(self):
         return f'<Office: {self.id}>'
 
     def serialize(self):
         return{
-            "id": self.id
+            "id": self.id,
+            "name": self.name,
+            "address": self.address
         }
 
 class User(db.Model):
