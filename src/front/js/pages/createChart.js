@@ -165,11 +165,11 @@ export const CreateChart = () => {
         </div>
 
         <div className="d-flex row">
-          <div className="col-3">
+          <div className="col-3 text-secondary">
             Gender:
             <div class="dropdown mt-2 me-4">
               <button
-                class="btn btn-secondary dropdown-toggle"
+                class="btn btn-secondary dropdown-toggle px-4"
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
