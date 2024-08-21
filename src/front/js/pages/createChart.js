@@ -7,7 +7,12 @@ export const CreateChart = () => {
   const navigate = useNavigate();
   const { store, actions } = useContext(Context);
   const [selectedGender, setSelectedGender] = useState("Select Gender");
+  const [selectedFinancialClass, setSelectedFinancialClass] = useState(
+    "Select financial class"
+  );
   const [inputValue, setInputValue] = useState({
+    chart: "",
+    office_id: "",
     name: "",
     middle_name: "",
     last_name: "",
@@ -22,7 +27,6 @@ export const CreateChart = () => {
     subscriber_id: "",
     coverage_start_date: "",
     coverage_end_date: "",
-    gender: selectedGender,
   });
 
   function handleChange(event) {
@@ -31,6 +35,10 @@ export const CreateChart = () => {
 
   function handleGenderSelect(gender) {
     setSelectedGender(gender);
+  }
+
+  function handleFinancialClassSelection(financial_class_of_insurance) {
+    setSelectedFinancialClass(financial_class_of_insurance);
   }
 
   async function handleSubmit(event) {
@@ -48,6 +56,10 @@ export const CreateChart = () => {
     }
     if (selectedGender == "Select Gender") {
       alert("Please select a gender");
+    }
+
+    if (selectedFinancialClass == "Select financial class") {
+      alert("Please select a financial class");
     }
 
     const success = await actions.createChart({
@@ -70,7 +82,7 @@ export const CreateChart = () => {
       subscriber_id: inputValue.subscriber_id,
       subscription_start_date: inputValue.subscription_start_date,
       subscription_end_date: inputValue.subscription_end_date,
-      financial_class_of_insurance: inputValue.financial_class_of_insurance,
+      financial_class_of_insurance: selectedFinancialClass,
 
       name_of_pharmacy: inputValue.name_of_pharmacy,
       address_of_pharmacy: inputValue.address_of_pharmacy,
@@ -313,7 +325,7 @@ export const CreateChart = () => {
           <h3>Insurance details</h3>
 
           <div className="flex row">
-            <div className="col-6">
+            <div className="col-4">
               <label
                 htmlFor=""
                 className="form-label text-secondary d-flex justify-content-start"
@@ -329,7 +341,7 @@ export const CreateChart = () => {
               />
             </div>
 
-            <div className="col-6">
+            <div className="col-4">
               <label
                 htmlFor=""
                 className="form-label text-secondary d-flex justify-content-start"
@@ -343,6 +355,78 @@ export const CreateChart = () => {
                 type="text"
                 className="form-control input-back"
               />
+            </div>
+
+            <div className="col-4">
+              <label className="form-label text-secondary d-flex justify-content-start">
+                Financial class:
+              </label>
+              <div className="dropdown">
+                <button
+                  class="btn btn-secondary dropdown-toggle px-4"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  {selectedFinancialClass}
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("hmo")}
+                    >
+                      HMO
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("ppo")}
+                    >
+                      PPO
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("mc")}
+                    >
+                      MEDICARE
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("ml")}
+                    >
+                      MEDICAL
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("mm")}
+                    >
+                      MEDICARE & MEDICAL
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("sp")}
+                    >
+                      SELF-PAY
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 

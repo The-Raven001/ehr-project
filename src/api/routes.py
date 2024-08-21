@@ -63,21 +63,6 @@ def handle_login():
     access_token = create_access_token(identity=user.id)
     return {"access_token": access_token}, 200
 
-@api.route('/register', methods=['POST'])
-def handle_register():
-    data = request.get_json()
-    new_user = User(
-        name=data.get('name'),
-        last_name=data.get('last_name'),
-        email=data.get('email'),
-        password=data.get('password'),
-        office_id=data.get('office_id'),
-        role=data.get('role')
-    )
-    db.session.add(new_user)
-    db.session.commit()
-    return new_user.serialize(), 201
-
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
