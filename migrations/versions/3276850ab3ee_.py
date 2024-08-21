@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: f7bd9b04fba9
+Revision ID: 3276850ab3ee
 Revises: 
-Create Date: 2024-08-20 20:23:16.497604
+Create Date: 2024-08-20 23:10:45.681989
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f7bd9b04fba9'
+revision = '3276850ab3ee'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -38,7 +38,7 @@ def upgrade():
     sa.Column('office_id', sa.Integer(), nullable=True),
     sa.Column('name_of_insurance', sa.String(length=100), nullable=True),
     sa.Column('subscriber_id', sa.String(length=50), nullable=True),
-    sa.Column('subscription_start_date', sa.Date(), nullable=False),
+    sa.Column('subscription_start_date', sa.Date(), nullable=True),
     sa.Column('subscription_end_date', sa.Date(), nullable=True),
     sa.Column('financial_class_of_insurance', sa.Enum('HMO', 'PPO', 'MEDICARE', 'MEDICAL', 'MEDICAREMEDICAL', 'SELFPAYED', name='financialclass'), nullable=False),
     sa.Column('name_of_pharmacy', sa.String(length=50), nullable=True),
@@ -75,9 +75,9 @@ def upgrade():
     )
     op.create_table('prescription',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name_of_medication', sa.String(length=100), nullable=True),
-    sa.Column('quantity', sa.Integer(), nullable=True),
-    sa.Column('quantity_of_refills', sa.Integer(), nullable=True),
+    sa.Column('name_of_medication', sa.String(length=100), nullable=False),
+    sa.Column('quantity', sa.Integer(), nullable=False),
+    sa.Column('quantity_of_refills', sa.Integer(), nullable=False),
     sa.Column('patient_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
     sa.PrimaryKeyConstraint('id')

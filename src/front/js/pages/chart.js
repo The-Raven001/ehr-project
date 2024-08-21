@@ -3,21 +3,21 @@ import "../../styles/chart.css";
 
 export const Chart = () => {
   return (
-    <div class="patient-info">
-      <div class="patient-header">
-        <div class="patient-profile">
-          <div class="patient-avatar">
+    <div className="patient-info">
+      <div className="patient-header">
+        <div className="patient-profile">
+          <div className="patient-avatar">
             <img
               src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
               alt="Avatar"
             />
           </div>
-          <div class="patient-details">
+          <div className="patient-details">
             <h3>John Doe</h3>
             <p>Chart #: 12345678</p>
           </div>
         </div>
-        <div class="patient-summary">
+        <div className="patient-summary">
           <p>
             <strong>Date of Birth:</strong> 05/15/1985
           </p>
@@ -30,64 +30,99 @@ export const Chart = () => {
         </div>
       </div>
 
-      <div class="patient-records">
-        <div class="section">
-          <h4>Documents</h4>
+      <div className="patient-records row">
+        <div className="section col-6">
+          <div>
+            <h4 className="d-flex justify-content-between">
+              <strong>Documents{""}</strong>
+              <i
+                className="fa-solid fa-circle-plus me-3"
+                styleName="color: #01060e;"
+              ></i>
+            </h4>
+          </div>
           <ul>
             <li>
               <span>Medical History</span>
-              <button class="view-button">View</button>
+              <button className="view-button">View</button>
             </li>
             <li>
               <span>Lab Results</span>
-              <button class="view-button">View</button>
+              <button className="view-button">View</button>
             </li>
             <li>
               <span>Imaging Reports</span>
-              <button class="view-button">View</button>
+              <button className="view-button">View</button>
             </li>
           </ul>
         </div>
-        <div class="section">
-          <h4>Clinical Notes</h4>
+        <div className="section col-6">
+          <h4 className="d-flex justify-content-between">
+            <strong>Current Prescriptions</strong>
+            <i
+              className="fa-solid fa-circle-plus me-3"
+              styleName="color: #01060e;"
+            ></i>
+          </h4>
           <ul>
             <li>
-              <span>Physician Visit</span>
-              <button class="view-button">View</button>
-            </li>
-            <li>
-              <span>Nursing Notes</span>
-              <button class="view-button">View</button>
-            </li>
-            <li>
-              <span>Therapy Notes</span>
-              <button class="view-button">View</button>
-            </li>
-          </ul>
-        </div>
-        <div class="section">
-          <h4>Current Prescriptions</h4>
-          <ul>
-            <li>
-              <div class="prescription-details">
+              <div className="prescription-details">
                 <span>Metformin</span>
-                <span class="prescription-info">500mg, 2x daily</span>
+                <span className="prescription-info">500mg, 2x daily</span>
               </div>
-              <button class="refill-button">Refill</button>
+              <button className="edit-button mx-2">Edit</button>
+              <button className="delete-button">Delete</button>
             </li>
             <li>
-              <div class="prescription-details">
+              <div className="prescription-details">
                 <span>Atorvastatin</span>
-                <span class="prescription-info">10mg, 1x daily</span>
+                <span className="prescription-info">10mg, 1x daily</span>
               </div>
-              <button class="refill-button">Refill</button>
+              <button className="edit-button mx-2">Edit</button>
+              <button className="delete-button">Delete</button>
             </li>
             <li>
-              <div class="prescription-details">
+              <div className="prescription-details">
                 <span>Lisinopril</span>
-                <span class="prescription-info">20mg, 1x daily</span>
+                <span className="prescription-info">20mg, 1x daily</span>
               </div>
-              <button class="refill-button">Refill</button>
+              <button className="edit-button mx-2">Edit</button>
+              <button className="delete-button">Delete</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div className="notes row">
+        <div className="col-12">
+          <h4 className="d-flex justify-content-between">
+            <strong>Notes of interaction</strong>
+            <i
+              className="fa-solid fa-circle-plus me-3"
+              styleName="color: #01060e;"
+            ></i>
+          </h4>
+          <ul>
+            <li>
+              <h5>Title of note</h5>
+              <p>
+                Those will be the notes of the provide or any employee for the
+                clinic
+                weljghwenhwgkhwrgnhkwrgbwrhgrkhlgwkgwkhlwrhklgrwhkghwglglwr
+              </p>
+            </li>
+            <li>
+              <h5>Title of note</h5>
+              <p>
+                Those will be the notes of the provide or any employee for the
+                clinic
+              </p>
+            </li>
+            <li>
+              <h5>Title of note</h5>
+              <p>
+                Those will be the notes of the provide or any employee for the
+                clinic
+              </p>
             </li>
           </ul>
         </div>

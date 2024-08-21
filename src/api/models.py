@@ -79,7 +79,7 @@ class Patient(db.Model):
 #Insurance
     name_of_insurance = db.Column(db.String(100))
     subscriber_id = db.Column(db.String(50))
-    subscription_start_date = db.Column(Date, nullable=False)
+    subscription_start_date = db.Column(Date)
     subscription_end_date = db.Column(Date)
     financial_class_of_insurance = db.Column(SqlEnum(FinancialClass), nullable=False)
 
@@ -133,9 +133,9 @@ class Media(db.Model):
 
 class Prescription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name_of_medication = db.Column(db.String(100))
-    quantity = db.Column(db.Integer)
-    quantity_of_refills = db.Column(db.Integer)
+    name_of_medication = db.Column(db.String(100), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    quantity_of_refills = db.Column(db.Integer, nullable=False)
     patient_id = db.Column(db.Integer, db.ForeignKey("patient.id"))
     patient = db.relationship(Patient)
 
