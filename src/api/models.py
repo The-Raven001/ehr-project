@@ -71,9 +71,10 @@ class Patient(db.Model):
     phone_number = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     gender = db.Column(SqlEnum(Gender), nullable=False)
-    dob = db.Column(db.String(10), nullable=False)
+    dob = db.Column(db.Date, nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey('office.id'))
     office = db.relationship(Office)
+
 
 #Insurance
     name_of_insurance = db.Column(db.String(100))
@@ -86,13 +87,6 @@ class Patient(db.Model):
     
     name_of_pharmacy = db.Column(db.String(50))
     address_of_pharmacy = db.Column(db.String(100))
-
-#Prescriptions
-
-    name_of_medication = db.Column(db.String(100))
-    quantity = db.Column(db.Integer)
-    quantity_of_refills = db.Column(db.Integer)
-
 
     def serialize(self):
         return {
@@ -135,4 +129,46 @@ class Media(db.Model):
     def __repr__(self):
         return{
             f"<Media {self.id}>"
+        }
+
+class Prescription(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name_of_medication = db.Column(db.String(100))
+    quantity = db.Column(db.Integer)
+    quantity_of_refills = db.Column(db.Integer)
+    patient_id = db.Column(db.Integer, db.ForeignKey("patient.id"))
+    patient = db.relationship(Patient)
+
+    def serialize(self):
+        return{
+            "id": self.id,
+            "name of medication": self.name_of_medication,
+            "quantity": self.quantity,
+            "quantity_of_refills": self.quantity_of_refills,
+            "patient_id": self.patient_id 
+        }
+
+    def __repr__(self):
+        return{
+            f"<Prescription {self.id}>"
+        }
+
+class Note(db.Model):
+    id = db.Column(Integer, primary_key=True)
+    title = db.Column(String(60), nullable=False)
+    content = db.Column(String(2000), nullable=False)
+    patient_id = db.Column(db.Integer, db.ForeignKey("patient.id"))
+    patient = db.relationship(Patient)
+
+    def serialize(self):
+        return{
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "patient_id": self.patient_id
+        }
+
+    def __repr__(self):
+        return{
+            f"<Note {self.note}>"
         }

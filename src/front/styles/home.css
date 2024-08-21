@@ -73,3 +73,78 @@ body {
   height: auto;
   border-radius: 20px;
 }
+
+.patient-info {
+  max-width: 800px;
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.patient-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.patient-profile {
+  display: flex;
+}
+
+.patient-avatar img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.patient-details h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.patient-summary p {
+  margin: 0;
+}
+
+.patient-records {
+  display: flex;
+  justify-content: space-between;
+}
+
+.section {
+  width: 30%;
+}
+
+.section h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.section li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.view-button,
+.refill-button {
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.view-button:hover,
+.refill-button:hover {
+  background-color: #ddd;
+}
