@@ -4,8 +4,6 @@ import { Context } from "../store/appContext";
 
 export const CreateProfile = () => {
   const params = useParams();
-  const navigate = useNavigate();
-  const { userType, setUserType } = useState("Select user type");
   const { store, actions } = useContext(Context);
   const [inputValue, setInputValue] = useState({
     name: "",
@@ -14,10 +12,6 @@ export const CreateProfile = () => {
     password: "",
     userType: "",
   });
-
-  function handleUserTypeSelection(userTypeValue) {
-    setInputValue({ ...inputValue, userType: userTypeValue });
-  }
 
   function handleChange(event) {
     setInputValue({ ...inputValue, [event.target.name]: event.target.value });
@@ -36,9 +30,10 @@ export const CreateProfile = () => {
     }
     const success = await actions.signUp({
       name: inputValue.name,
-      last_name: inputValue.last_name,
+      last_name: inputValue.lastName,
       email: inputValue.email,
       password: inputValue.password,
+      user_type: inputValue.userType,
     });
   }
 
@@ -110,36 +105,21 @@ export const CreateProfile = () => {
           />
         </div>
         <div>
-          <div class="dropdown mt-2 me-4">
-            <button
-              class="btn btn-secondary dropdown-toggle"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              {userType}
-            </button>
-            <ul class="dropdown-menu">
-              <li>
-                <button
-                  class="dropdown-item"
-                  type="button"
-                  onClick={() => handleUserTypeSelection("User")}
-                >
-                  User
-                </button>
-              </li>
-              <li>
-                <button
-                  class="dropdown-item"
-                  type="button"
-                  onClick={() => handleUserTypeSelection("Admin")}
-                >
-                  Admin
-                </button>
-              </li>
-            </ul>
-          </div>
+          <label
+            htmlFor=""
+            className="form-label text-secondary d-flex justify-content-start"
+          >
+            Select role:
+          </label>
+          <select
+            className="form-select"
+            aria-label="Default select example"
+            defaultValue={"user"}
+            onChange={(event) => handleChange(event)}
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
         </div>
         <button
           type="submit"
