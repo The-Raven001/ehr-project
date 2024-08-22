@@ -11,6 +11,7 @@ import { SignUp } from "./pages/signUp";
 import { EditChart } from "./pages/editChart";
 import { Login } from "./pages/login";
 import { Search } from "./pages/searchChart";
+import { Chart } from "./pages/chart";
 
 import injectContext from "./store/appContext";
 
@@ -38,6 +39,7 @@ const Layout = () => {
             <Route element={<SignUp />} path="/signup" />
             <Route element={<Demo />} path="/demo" />
             <Route element={<CreateChart />} path="/create-chart" />
+            <Route element={<Chart />} path="/chart" />
             <Route element={<EditChart />} path="/edit-chart" />
             <Route element={<Login />} path="/login" />
             <Route element={<Search />} path="/search" />

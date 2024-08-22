@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Patient, Office, Media, UserRole
+from api.models import db, User, Patient, Office, Media, UserRole, Prescription, Note
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -62,21 +62,6 @@ def handle_login():
         return {"error": "Invalid password"}, 401
     access_token = create_access_token(identity=user.id)
     return jsonify(access_token=access_token), 200
-
-@api.route('/register', methods=['POST'])
-def handle_register():
-    data = request.get_json()
-    new_user = User(
-        name=data.get('name'),
-        last_name=data.get('last_name'),
-        email=data.get('email'),
-        password=data.get('password'),
-        office_id=data.get('office_id'),
-        role=data.get('role')
-    )
-    db.session.add(new_user)
-    db.session.commit()
-    return new_user.serialize(), 201
 
 
 @api.route('/hello', methods=['POST', 'GET'])
@@ -140,10 +125,7 @@ def handle_patients():
             subscription_end_date=data.get('subscription_end_date'),
             financial_class_of_insurance=data.get('financial_class_of_insurance'),
             name_of_pharmacy=data.get('name_of_pharmacy'),
-            address_of_pharmacy=data.get('address_of_pharmacy'),
-            name_of_medication=data.get('name_of_medication'),
-            quantity=data.get('quantity'),
-            quantity_of_refills=data.get('quantity_of_refills')
+            address_of_pharmacy=data.get('address_of_pharmacy')
         )
         db.session.add(new_patient)
         db.session.commit()
@@ -178,9 +160,7 @@ def handle_patient(patient_id):
         patient.financial_class_of_insurance = data.get('financial_class_of_insurance')
         patient.name_of_pharmacy = data.get('name_of_pharmacy')
         patient.address_of_pharmacy = data.get('address_of_pharmacy')
-        patient.name_of_medication = data.get('name_of_medication')
-        patient.quantity = data.get('quantity')
-        patient.quantity_of_refills = data.get('quantity_of_refills')
+
         db.session.commit()
         return patient.serialize(), 200
 
@@ -243,19 +223,106 @@ def handle_medias():
 def handle_media(media_id):
     media = Media.query.get(media_id)
     if not media:
-        return {"error": "Media not found"}, 404
+        return jsonify({"error": "Media not found"}), 404
 
     if request.method == 'GET':
-        return media.serialize(), 200
+        return jsonify(media.serialize()), 200
 
     if request.method == 'PUT':
         data = request.get_json()
         media.url = data.get('url')
         media.patient_id = data.get('patient_id')
         db.session.commit()
-        return media.serialize(), 200
+        return jsonify(media.serialize()), 200
 
     if request.method == 'DELETE':
         db.session.delete(media)
         db.session.commit()
         return {"message": "Media deleted"}, 200
+
+
+
+@api.route('/prescriptions', methods=['GET', 'POST'])
+@jwt_required()
+def handle_prescriptions():
+    if reques.method == 'GET':
+        prescriptions= Prescription.query.all()
+        return jsonify([prescription.serialize() for prescription in prescriptions]), 200
+    if request.method == 'POST':
+        data = request.get_json()
+        new_prescription = Prescription(
+            name_of_medication=data.get('name_of_medication'),
+            quantity=data.get('quantity'),
+            quantity_of_refills=data.get('quantity_of_refills'),
+            patient_id=data.get('patient_id')
+        )
+
+        db.session.add(new_prescription)
+        db.session.commit()
+        return jsonify(new_prescription.serialize()), 201
+
+@api.route('/prescriptions/<int:prescription_id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required()
+def handle_prescription(prescription_id):
+    prescription = Prescription.query.get(prescription_id)
+    if not prescription:
+        return jsonify({"error": "Prescription not found"}), 404
+
+    if request.method == 'GET':
+        return prescription.serialize(), 200
+
+    if request.method == 'PUT':
+        data = request.get_json()
+        prescription.name_of_medication = data.get('name_of_medication')
+        prescription.quantity = data.get('quantity')
+        prescription.quantity_of_refills = data.get('quantity_of_refills')
+
+        db.session.commit()
+        return jsonify(prescription.serialize()), 200
+
+    if request.method == 'DELETE':
+        db.session.delete(prescription)
+        db.session.commit()
+        return jsonify({"message": "Prescription deleted"}), 200
+    
+@api.route('/notes', methods=['GET', 'POST'])
+@jwt_required()
+def handle_notes():
+    if request.method == 'GET':
+        notes = Note.query.all()
+        return jsonify([note.serialize() for note in notes]), 200
+    if request.method == 'POST':
+        data = request.get_json()
+        new_note = Note(
+            title= data.get('title'),
+            content= data.get('content'),
+            patient_id=data.get('patient_id')
+        )
+        db.session.add(new_note)
+        db.session.commit()
+        return jsonify(new_note.serialize()), 201
+
+@api.route('/notes/<int:note_id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required()
+def handle_note(note_id):
+    note = Note.query.get(note_id)
+    if not note:
+        return jsonify({"error": "Note not found"}), 404
+
+    if request.method == 'GET':
+        return jsonify(note.serialize()), 200
+
+    if request.method == 'PUT':
+        data = request.get_json()
+
+        note.title = data.get('title')
+        note.content = data.get('content')
+        note.patient_id = data.get('patient_id')
+
+        db.session.commit()
+        return jsonify(note.serialize()), 200
+
+    if request.method == 'DELETE':
+        db.session.delete(note)
+        db.session.commit()
+        return jsonify({"message": "Note deleted"}), 200

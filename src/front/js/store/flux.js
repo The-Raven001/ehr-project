@@ -109,6 +109,66 @@ const getState = ({ getStore, getActions, setStore }) => {
           return false;
         }
       },
+
+      createChart: async ({
+        chart,
+        name,
+        middle_name,
+        last_name,
+        address,
+        phone_number,
+        email,
+        gender,
+        dob,
+        office_id,
+
+        name_of_insurance,
+        subscriber_id,
+        subscription_start_date,
+        subscription_end_date,
+        financial_class_of_insurance,
+
+        name_of_pharmacy,
+        address_of_pharmacy,
+      }) => {
+        try {
+          const response = await fetch(
+            process.env.BACKEND_URL + "/api/create-chart",
+            {
+              method: "POST",
+              headers: { "Content-type": "application/json" },
+              body: JSON.stringify({
+                chart: chart,
+                name: name,
+                middle_name: middle_name,
+                last_name: last_name,
+                address: address,
+                phone_number: phone_number,
+                email: email,
+                gender: gender,
+                dob: dob,
+                office_id: office_id,
+                name_of_insurance: name_of_insurance,
+                subscriber_id: subscriber_id,
+                subscription_start_date: subscription_start_date,
+                subscription_end_date: subscription_end_date,
+                financial_class_of_insurance: financial_class_of_insurance,
+                name_of_pharmacy: name_of_pharmacy,
+                address_of_pharmacy: address_of_pharmacy,
+              }),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Unable to create chart");
+          }
+
+          console.log("Chart created succesfully!");
+          return true;
+        } catch (error) {
+          console.log("Error creating chart:", error);
+          return false;
+
       logout: () => {
         localStorage.removeItem("token");
         setStore({ token: null, user: null });
@@ -126,6 +186,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           setStore({ user: data });
         } catch (error) {
           console.log("Error getting user", error);
+
         }
       },
     },
