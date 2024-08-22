@@ -168,6 +168,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         } catch (error) {
           console.log("Error creating chart:", error);
           return false;
+        }
+      },
 
       logout: () => {
         localStorage.removeItem("token");
@@ -186,7 +188,6 @@ const getState = ({ getStore, getActions, setStore }) => {
           setStore({ user: data });
         } catch (error) {
           console.log("Error getting user", error);
-
         }
       },
     },
