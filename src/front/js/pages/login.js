@@ -15,6 +15,7 @@ export const Login = () => {
     setInputValue({ ...inputValue, [event.target.name]: event.target.value });
   }
 
+  console.log(store.user);
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -28,7 +29,7 @@ export const Login = () => {
       password: inputValue.password,
     });
     if (success) {
-      navigate("/search");
+      navigate("/protected/profile");
     } else {
       alert("Unable to log you in.");
     }
