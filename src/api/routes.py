@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Patient, Office, Media
+from api.models import db, User, Patient, Office, Media, UserRole
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -11,6 +11,46 @@ api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
+
+@api.route('/signup', methods=['POST'])
+def handle_signup():
+    data = request.get_json()
+
+    try: 
+        new_office = Office(
+        name=data.get('name_office'),
+        address=data.get('address'),
+        )
+
+        db.session.add(new_office)
+        db.session.commit()
+        db.session.refresh(new_office)
+
+        new_office_id = new_office.id
+
+        first_user = User(
+            name=data.get('name'),
+            last_name=data.get('last_name'),
+            email=data.get('email'),
+            password=data.get('password'),
+            office_id=new_office_id,
+            role=UserRole('admin') 
+        )   
+
+        db.session.add(first_user)
+        db.session.commit()
+        db.session.refresh(first_user)
+
+        return jsonify({
+            "message": "Office and first user created successfully"
+        }), 200
+
+    except Exception as e:
+        # Log the error for further inspection
+        print(f"Error in handle_signup: {e}")
+        db.session.rollback()
+        return jsonify({"error": "An error occurred while creating office or user"}), 500
+
 
 @api.route('/login', methods=['POST'])
 def handle_login():

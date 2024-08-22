@@ -6,7 +6,70 @@
     on that page only (the ones not reused in other pages).
 */
 
+body {
+  background-image: url("https://wallpapers.com/images/featured/black-wuuaobghtdllhliu.jpg");
+  font-family: Arial, sans-serif;
+}
+
 .maindiv,
 .saveButton {
   border-radius: 15px;
+}
+
+.saveButton:hover {
+  background-color: white;
+  color: black;
+}
+
+.landing {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.textlanding {
+  max-width: 600px;
+}
+
+.text-content h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #000;
+}
+
+.text-content p {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.buttonslanding {
+  display: flex;
+  gap: 20px;
+}
+
+.btnslanding {
+  padding: 15px 30px;
+  font-size: 16px;
+
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.image-content {
+  width: 50%;
+  height: auto;
+  background-color: #f8f8f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 20px;
 }

@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
-export const CreateChart = () => {
+export const EditChart = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { store, actions } = useContext(Context);
@@ -22,7 +22,6 @@ export const CreateChart = () => {
     insuranceId: "",
     coverageStartDate: "",
     coverageEndDate: "",
-    gender: selectedGender,
   });
 
   function handleChange(event) {
@@ -51,13 +50,13 @@ export const CreateChart = () => {
   }
 
   return (
-    <div>
+    <div className="">
+      <h1 className="text-center text-secondary">Edit chart</h1>
       <form
         action=""
         onSubmit={handleSubmit}
-        className="container w-50 border border-3 maindiv mt-5 mb-3 bg-light"
+        className="container w-50 border border-3 maindiv mt-5 mb-3"
       >
-        <h1 className="text-center text-secondary bg">Add new patient</h1>
         <h3 className="mt-3">Demographics:</h3>
 
         <div className="d-flex row">
@@ -165,11 +164,11 @@ export const CreateChart = () => {
         </div>
 
         <div className="d-flex row">
-          <div className="col-3 text-secondary">
+          <div className="col-3">
             Gender:
             <div class="dropdown mt-2 me-4">
               <button
-                class="btn btn-secondary dropdown-toggle px-4"
+                class="btn btn-secondary dropdown-toggle"
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
@@ -349,16 +348,11 @@ export const CreateChart = () => {
         </div>
         <div className="d-flex justify-content-center">
           <button
+            className="btn btn-danger w-50 mt-3 mb-3 saveButton"
             type="submit"
-            className="btn btn-dark w-50 mt-3 mb-3 saveButton"
           >
-            Create
+            Delete Chart
           </button>
-        </div>
-        <div className="d-flex justify-content-center mb-2">
-          <Link to="/search">
-            <span>Go back</span>
-          </Link>
         </div>
       </form>
     </div>
