@@ -2,31 +2,26 @@ import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
-export const CreateChart = () => {
+export const EditChart = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { store, actions } = useContext(Context);
   const [selectedGender, setSelectedGender] = useState("Select Gender");
-  const [selectedFinancialClass, setSelectedFinancialClass] = useState(
-    "Select financial class"
-  );
   const [inputValue, setInputValue] = useState({
-    chart: "",
-    office_id: "",
     name: "",
-    middle_name: "",
-    last_name: "",
+    middleName: "",
+    lastName: "",
     address: "",
-    phone_number: "",
+    phone: "",
     email: "",
     dob: "",
     provider: "",
-    pharmacy_name: "",
-    pharmacy_address: "",
-    name_of_insurance: "",
-    subscriber_id: "",
-    coverage_start_date: "",
-    coverage_end_date: "",
+    pharmacyName: "",
+    pharmacyAddress: "",
+    nameOfInsurance: "",
+    insuranceId: "",
+    coverageStartDate: "",
+    coverageEndDate: "",
   });
 
   function handleChange(event) {
@@ -37,19 +32,14 @@ export const CreateChart = () => {
     setSelectedGender(gender);
   }
 
-  function handleFinancialClassSelection(financial_class_of_insurance) {
-    setSelectedFinancialClass(financial_class_of_insurance);
-  }
-
   async function handleSubmit(event) {
     event.preventDefault();
     if (
       inputValue.name == "" ||
       inputValue.lastName == "" ||
       inputValue.address == "" ||
-      inputValue.phone_number == "" ||
-      inputValue.dob == "" ||
-      inputValue.email == ""
+      inputValue.phone == "" ||
+      inputValue.dob == ""
     ) {
       alert("Some inputs can not be empty");
       return;
@@ -57,52 +47,16 @@ export const CreateChart = () => {
     if (selectedGender == "Select Gender") {
       alert("Please select a gender");
     }
-
-    if (selectedFinancialClass == "Select financial class") {
-      alert("Please select a financial class");
-    }
-
-    const success = await actions.createChart({
-      // Needs fix!!
-      chart: inputValue.chart,
-
-      name: inputValue.name,
-      middle_name: inputValue.middleName,
-      last_name: inputValue.lastName,
-      address: inputValue.address,
-      phone_number: inputValue.phone_number,
-      email: inputValue.email,
-      gender: selectedGender,
-      dob: inputValue.dob,
-
-      // Needs fix!!
-      office_id: inputValue.office_id,
-
-      name_of_insurance: inputValue.name_of_insurance,
-      subscriber_id: inputValue.subscriber_id,
-      subscription_start_date: inputValue.subscription_start_date,
-      subscription_end_date: inputValue.subscription_end_date,
-      financial_class_of_insurance: selectedFinancialClass,
-
-      name_of_pharmacy: inputValue.name_of_pharmacy,
-      address_of_pharmacy: inputValue.address_of_pharmacy,
-    });
-
-    if (success) {
-      navigate("/search");
-    } else {
-      alert("There was a problem creating the chart");
-    }
   }
 
   return (
-    <div>
+    <div className="">
+      <h1 className="text-center text-secondary">Edit chart</h1>
       <form
         action=""
         onSubmit={handleSubmit}
-        className="container w-50 border border-3 maindiv mt-5 mb-3 bg-light"
+        className="container w-50 border border-3 maindiv mt-5 mb-3"
       >
-        <h1 className="text-center text-secondary bg">Add new patient</h1>
         <h3 className="mt-3">Demographics:</h3>
 
         <div className="d-flex row">
@@ -130,8 +84,8 @@ export const CreateChart = () => {
               Middle name (optional):
             </label>
             <input
-              name="last_name"
-              value={inputValue.middle_name}
+              name="lastName"
+              value={inputValue.middleName}
               onChange={(event) => handleChange(event)}
               type="text"
               className="form-control input-back"
@@ -146,8 +100,8 @@ export const CreateChart = () => {
               Last name:
             </label>
             <input
-              name="last_name"
-              value={inputValue.last_name}
+              name="lastName"
+              value={inputValue.lastName}
               onChange={(event) => handleChange(event)}
               type="text"
               className="form-control input-back"
@@ -183,8 +137,8 @@ export const CreateChart = () => {
                 Phone number:
               </label>
               <input
-                name="phone_number"
-                value={inputValue.phone_number}
+                name="phone"
+                value={inputValue.phone}
                 onChange={(event) => handleChange(event)}
                 type="number"
                 className="form-control input-back"
@@ -210,11 +164,11 @@ export const CreateChart = () => {
         </div>
 
         <div className="d-flex row">
-          <div className="col-3 text-secondary">
+          <div className="col-3">
             Gender:
             <div class="dropdown mt-2 me-4">
               <button
-                class="btn btn-secondary dropdown-toggle px-4"
+                class="btn btn-secondary dropdown-toggle"
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
@@ -298,7 +252,7 @@ export const CreateChart = () => {
               </label>
               <input
                 name="pharmacy"
-                value={inputValue.pharmacy_name}
+                value={inputValue.pharmacyName}
                 onChange={(event) => handleChange(event)}
                 type="text"
                 className="form-control input-back"
@@ -313,8 +267,8 @@ export const CreateChart = () => {
                 Pharmacy's address:
               </label>
               <textarea
-                name="pharmacy_address"
-                value={inputValue.pharmacy_address}
+                name="pharmacyAddress"
+                value={inputValue.pharmacyAddress}
                 onChange={(event) => handleChange(event)}
                 type="text"
                 className="form-control input-back"
@@ -325,7 +279,7 @@ export const CreateChart = () => {
           <h3>Insurance details</h3>
 
           <div className="flex row">
-            <div className="col-4">
+            <div className="col-6">
               <label
                 htmlFor=""
                 className="form-label text-secondary d-flex justify-content-start"
@@ -333,15 +287,15 @@ export const CreateChart = () => {
                 Name of Insurance:
               </label>
               <input
-                name="Name_of_insurance"
-                value={inputValue.name_of_insurance}
+                name="NameOfInsurance"
+                value={inputValue.nameOfInsurance}
                 onChange={(event) => handleChange(event)}
                 type="text"
                 className="form-control input-back"
               />
             </div>
 
-            <div className="col-4">
+            <div className="col-6">
               <label
                 htmlFor=""
                 className="form-label text-secondary d-flex justify-content-start"
@@ -349,84 +303,12 @@ export const CreateChart = () => {
                 Insurance ID:
               </label>
               <input
-                name="subscriber__id"
-                value={inputValue.subscriber_id}
+                name="insuranceId"
+                value={inputValue.insuranceId}
                 onChange={(event) => handleChange(event)}
                 type="text"
                 className="form-control input-back"
               />
-            </div>
-
-            <div className="col-4">
-              <label className="form-label text-secondary d-flex justify-content-start">
-                Financial class:
-              </label>
-              <div className="dropdown">
-                <button
-                  class="btn btn-secondary dropdown-toggle px-4"
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {selectedFinancialClass}
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <button
-                      class="dropdown-item"
-                      type="button"
-                      onClick={() => handleFinancialClassSelection("hmo")}
-                    >
-                      HMO
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      class="dropdown-item"
-                      type="button"
-                      onClick={() => handleFinancialClassSelection("ppo")}
-                    >
-                      PPO
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      class="dropdown-item"
-                      type="button"
-                      onClick={() => handleFinancialClassSelection("mc")}
-                    >
-                      MEDICARE
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      class="dropdown-item"
-                      type="button"
-                      onClick={() => handleFinancialClassSelection("ml")}
-                    >
-                      MEDICAL
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      class="dropdown-item"
-                      type="button"
-                      onClick={() => handleFinancialClassSelection("mm")}
-                    >
-                      MEDICARE & MEDICAL
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      class="dropdown-item"
-                      type="button"
-                      onClick={() => handleFinancialClassSelection("sp")}
-                    >
-                      SELF-PAY
-                    </button>
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
 
@@ -439,8 +321,8 @@ export const CreateChart = () => {
                 Coverage start date:
               </label>
               <input
-                name="coverage_start_date"
-                value={inputValue.coverage_start_date}
+                name="coverageStart"
+                value={inputValue.coverageStartDate}
                 onChange={(event) => handleChange(event)}
                 type="date"
                 className="form-control input-back"
@@ -455,8 +337,8 @@ export const CreateChart = () => {
                 Coverage end date:
               </label>
               <input
-                name="coverage_end_date"
-                value={inputValue.coverage_end_date}
+                name="coverageEnd"
+                value={inputValue.coverageEndDate}
                 onChange={(event) => handleChange(event)}
                 type="date"
                 className="form-control input-back"
@@ -466,50 +348,13 @@ export const CreateChart = () => {
         </div>
         <div className="d-flex justify-content-center">
           <button
+            className="btn btn-danger w-50 mt-3 mb-3 saveButton"
             type="submit"
-            className="btn btn-dark w-50 mt-3 mb-3 saveButton"
           >
-            Create
+            Delete Chart
           </button>
         </div>
-        <div className="d-flex justify-content-center mb-2">
-          <Link to="/search">
-            <span>Go back</span>
-          </Link>
-        </div>
       </form>
-
-      <div className="col-4">
-        <label
-          htmlFor=""
-          className="form-label text-secondary d-flex justify-content-start"
-        >
-          Chart
-        </label>
-        <input
-          name="chart"
-          value={inputValue.chart}
-          onChange={(event) => handleChange(event)}
-          type="number"
-          className="form-control input-back"
-        />
-      </div>
-
-      <div className="col-4">
-        <label
-          htmlFor=""
-          className="form-label text-secondary d-flex justify-content-start"
-        >
-          Office
-        </label>
-        <input
-          name="office_id"
-          value={inputValue.office_id}
-          onChange={(event) => handleChange(event)}
-          type="number"
-          className="form-control input-back"
-        />
-      </div>
     </div>
   );
 };

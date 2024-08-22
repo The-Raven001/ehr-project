@@ -21,7 +21,7 @@ export const Search = () => {
     }
   }
   return (
-    <div className="container w-50 border border-3 mt-5 maindiv">
+    <div className="container w-50 border border-3 mt-5 maindiv bg-light">
       <form action="" onSubmit={handleSubmit}>
         <h2 className="text-center text-secondary">Search patient by chart</h2>
         <div>
