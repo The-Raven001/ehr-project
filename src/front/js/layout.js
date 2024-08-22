@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
@@ -17,6 +17,8 @@ import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+import { Profile } from "./component/profile";
+import { AuthWrapper } from "./component/authwrapper";
 
 //create your first component
 const Layout = () => {
@@ -41,6 +43,9 @@ const Layout = () => {
             <Route element={<EditChart />} path="/edit-chart" />
             <Route element={<Login />} path="/login" />
             <Route element={<Search />} path="/search" />
+            <Route element={<AuthWrapper />} path="/protected">
+              <Route element={<Profile />} path="profile" />
+            </Route>
             <Route element={<h1>Not found!</h1>} />
           </Routes>
           <Footer />
