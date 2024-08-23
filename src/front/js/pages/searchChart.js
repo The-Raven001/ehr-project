@@ -16,8 +16,17 @@ export const Search = () => {
   async function handleSubmit(event) {
     event.preventDefault();
     if (inputValue.chart === "") {
-      alert("the inputs can not be empty");
+      alert("Please enter a chart number");
       return;
+    }
+
+    const success = await actions.search(inputValue.chart);
+
+    if (success) {
+      alert("Patient found");
+      navigate("/chart");
+    } else {
+      alert("Patient not found");
     }
   }
   return (

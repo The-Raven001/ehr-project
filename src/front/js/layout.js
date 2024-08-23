@@ -16,7 +16,6 @@ import { Chart } from "./pages/chart";
 import injectContext from "./store/appContext";
 
 import { CreateProfile } from "./pages/createProfile";
-import { Register } from "./pages/register";
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import { Profile } from "./component/profile";
@@ -38,9 +37,7 @@ const Layout = () => {
           <Navbar />
           <Routes>
             <Route element={<Home />} path="/" />
-
-            <Route element={<Register />} path="/register" />
-            <Route element={<CreateProfile/>} path="/create-profile"/>
+            <Route element={<CreateProfile />} path="/create-profile" />
             <Route element={<SignUp />} path="/signup" />
 
             <Route element={<Demo />} path="/demo" />

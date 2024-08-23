@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Patient, Office, Media, UserRole, Prescription, Note
+from api.models import db, User, Patient, Office, Media, UserRole, Prescription, Note, Gender, FinancialClass
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -60,7 +60,7 @@ def handle_login():
         return {"error": "Invalid email"}, 401
     if user.password != data.get('password'):
         return {"error": "Invalid password"}, 401
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token({"id": user.id, "office_id": user.office_id})
     return jsonify(access_token=access_token), 200
 
 
@@ -100,36 +100,73 @@ def handle_user():
         db.session.commit()
         return {"message": "User deleted"}, 200
 
-@api.route('/patients', methods=['GET', 'POST'])
+@api.route('/patients', methods=['GET', 'POST', 'PUT'])
 @jwt_required()
 def handle_patients():
+
+    user = get_jwt_identity()
+    patients = Patient.query.filter_by(office_id=user["office_id"]).all()
+
     if request.method == 'GET':
-        patients = Patient.query.all()
+        
         return jsonify([patient.serialize() for patient in patients]), 200
     if request.method == 'POST':
         data = request.get_json()
         new_patient = Patient(
-            chart=data.get('chart'),
+            chart=len(patients) + 1,
             name=data.get('name'),
             middle_name=data.get('middle_name'),
             last_name=data.get('last_name'),
             address=data.get('address'),
             phone_number=data.get('phone_number'),
             email=data.get('email'),
-            gender=data.get('gender'),
+            gender=Gender(data.get('gender')),
             dob=data.get('dob'),
-            office_id=data.get('office_id'),
+            office_id=user["office_id"],
             name_of_insurance=data.get('name_of_insurance'),
             subscriber_id=data.get('subscriber_id'),
             subscription_start_date=data.get('subscription_start_date'),
             subscription_end_date=data.get('subscription_end_date'),
-            financial_class_of_insurance=data.get('financial_class_of_insurance'),
+            financial_class_of_insurance=FinancialClass(data.get('financial_class_of_insurance')),
             name_of_pharmacy=data.get('name_of_pharmacy'),
             address_of_pharmacy=data.get('address_of_pharmacy')
         )
         db.session.add(new_patient)
         db.session.commit()
         return new_patient.serialize(), 201
+
+    if request.method == 'PUT':
+        data = request.get_json()
+        patient_id = data.get('id')
+
+        if not patient_id:
+            return jsonify({"error": "Patient ID is required for updating"}), 400
+
+   
+        patient = Patient.query.filter_by(id=patient_id, office_id=user["office_id"]).first()
+
+        if not patient:
+            return jsonify({"error": "Patient not found"}), 404
+
+
+        patient.name = data.get('name', patient.name)
+        patient.middle_name = data.get('middle_name', patient.middle_name)
+        patient.last_name = data.get('last_name', patient.last_name)
+        patient.address = data.get('address', patient.address)
+        patient.phone_number = data.get('phone_number', patient.phone_number)
+        patient.email = data.get('email', patient.email)
+        patient.gender = Gender(data.get('gender', patient.gender.value))
+        patient.dob = data.get('dob', patient.dob)
+        patient.name_of_insurance = data.get('name_of_insurance', patient.name_of_insurance)
+        patient.subscriber_id = data.get('subscriber_id', patient.subscriber_id)
+        patient.subscription_start_date = data.get('subscription_start_date', patient.subscription_start_date)
+        patient.subscription_end_date = data.get('subscription_end_date', patient.subscription_end_date)
+        patient.financial_class_of_insurance = FinancialClass(data.get('financial_class_of_insurance', patient.financial_class_of_insurance.value))
+        patient.name_of_pharmacy = data.get('name_of_pharmacy', patient.name_of_pharmacy)
+        patient.address_of_pharmacy = data.get('address_of_pharmacy', patient.address_of_pharmacy)
+
+        db.session.commit()
+        return patient.serialize(), 200
 
 @api.route('/patients/<int:patient_id>', methods=['GET', 'PUT', 'DELETE'])
 @jwt_required()
@@ -326,3 +363,13 @@ def handle_note(note_id):
         db.session.delete(note)
         db.session.commit()
         return jsonify({"message": "Note deleted"}), 200
+
+#patient = Patient.query.filter_by(office_id=user["office_id"], chart=data.get("chart")).first()
+@api.route('/search/<int:chart>', methods=['GET'])
+@jwt_required()
+def handle_get_patient(chart):
+    user = get_jwt_identity()
+    patient = Patient.query.filter_by(office_id=user["office_id"], chart=chart).first()
+    if not patient:
+        return jsonify({"error": "chart not found"}), 404
+    return jsonify(patient.serialize()), 200

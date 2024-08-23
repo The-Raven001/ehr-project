@@ -1,7 +1,49 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "../../styles/chart.css";
+import { Context } from "../store/appContext";
+import { useNavigate } from "react-router-dom";
 
 export const Chart = () => {
+  const { store, actions } = useContext(Context);
+  const navigate = useNavigate();
+
+  // State variables for patient details
+  const [chart, setChart] = useState("");
+  const [name, setName] = useState("");
+  const [middleName, setMiddleName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [dob, setDob] = useState("");
+  const [insurance, setInsurance] = useState("");
+  const [pharmacy, setPharmacy] = useState("");
+
+  useEffect(() => {
+    const patient = store.patient;
+
+    if (patient) {
+      // Set state variables based on the data fetched from backend
+      setChart(patient.chart);
+      setName(patient.name);
+      setMiddleName(patient.middle_name);
+      setLastName(patient.last_name);
+      setEmail(patient.email);
+      setPhone(patient.phone_number);
+      setDob(patient.dob); // Assume 'dob' is formatted properly
+      setInsurance(patient.name_of_insurance);
+      setPharmacy(patient.name_of_pharmacy);
+    }
+
+    if (!patient) {
+      alert("There is no patient to show");
+      navigate("/search");
+    }
+  }, [store.patient]); // Run effect when store.patient changes
+
+  const handleEditClick = () => {
+    navigate(`/editchart/${chart}`);
+  };
+
   return (
     <div className="patient-info">
       <div className="patient-header">
@@ -13,20 +55,31 @@ export const Chart = () => {
             />
           </div>
           <div className="patient-details">
-            <h3>John Doe</h3>
-            <p>Chart #: 12345678</p>
+            <h3>{`${name} ${middleName} ${lastName}`}</h3>
+            <p>Chart #: {chart}</p>
           </div>
         </div>
         <div className="patient-summary">
           <p>
-            <strong>Date of Birth:</strong> 05/15/1985
+            <strong>Date of Birth:</strong> {dob}
           </p>
           <p>
-            <strong>Insurance:</strong> Blue Cross Blue Shield
+            <strong>Insurance:</strong> {insurance}
           </p>
           <p>
-            <strong>Primary Pharmacy:</strong> Walgreens
+            <strong>Primary Pharmacy:</strong> {pharmacy}
           </p>
+          <p>
+            <strong>Phone</strong> {phone}
+          </p>
+          <p>
+            <strong>Email</strong> {email}
+          </p>
+        </div>
+        <div className="edit-button-container">
+          <button className="edit-chart-button" onClick={handleEditClick}>
+            Edit Chart
+          </button>
         </div>
       </div>
 
@@ -34,10 +87,10 @@ export const Chart = () => {
         <div className="section col-6">
           <div>
             <h4 className="d-flex justify-content-between">
-              <strong>Documents{""}</strong>
+              <strong>Documents</strong>
               <i
                 className="fa-solid fa-circle-plus me-3"
-                styleName="color: #01060e;"
+                style={{ color: "#01060e" }}
               ></i>
             </h4>
           </div>
@@ -61,7 +114,7 @@ export const Chart = () => {
             <strong>Current Prescriptions</strong>
             <i
               className="fa-solid fa-circle-plus me-3"
-              styleName="color: #01060e;"
+              style={{ color: "#01060e" }}
             ></i>
           </h4>
           <ul>
@@ -98,30 +151,29 @@ export const Chart = () => {
             <strong>Notes of interaction</strong>
             <i
               className="fa-solid fa-circle-plus me-3"
-              styleName="color: #01060e;"
+              style={{ color: "#01060e" }}
             ></i>
           </h4>
           <ul>
             <li>
               <h5>Title of note</h5>
               <p>
-                Those will be the notes of the provide or any employee for the
-                clinic
-                weljghwenhwgkhwrgnhkwrgbwrhgrkhlgwkgwkhlwrhklgrwhkghwglglwr
+                These will be the notes of the provider or any employee for the
+                clinic.
               </p>
             </li>
             <li>
               <h5>Title of note</h5>
               <p>
-                Those will be the notes of the provide or any employee for the
-                clinic
+                These will be the notes of the provider or any employee for the
+                clinic.
               </p>
             </li>
             <li>
               <h5>Title of note</h5>
               <p>
-                Those will be the notes of the provide or any employee for the
-                clinic
+                These will be the notes of the provider or any employee for the
+                clinic.
               </p>
             </li>
           </ul>

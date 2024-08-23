@@ -14,6 +14,7 @@ const getState = ({ getStore, getActions, setStore }) => {
           initial: "white",
         },
       ],
+      patient: null,
     },
     actions: {
       // Use getActions to call a function within a fuction
@@ -106,6 +107,37 @@ const getState = ({ getStore, getActions, setStore }) => {
           return true;
         } catch (error) {
           console.log("Error in login", error);
+          return false;
+        }
+      },
+
+      search: async (chart) => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(
+            `${process.env.BACKEND_URL}api/search/${chart}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(
+              "There was an error while trying to search for the chart"
+            );
+          }
+
+          const data = await response.json();
+          console.log("Patient data:", data);
+
+          setStore({ patient: data });
+          return data;
+        } catch (error) {
+          console.log("Error while trying to search chart", error);
           return false;
         }
       },
