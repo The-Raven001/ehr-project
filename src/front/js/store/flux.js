@@ -114,7 +114,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			createPrescription: async (prescriptionData) => {
 				try {
-					const response = await fetch("https://prescriptions", {
+					const response = await fetch("/prescriptions", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
@@ -136,6 +136,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return false;
 				}
 			}
+			
 			
 			
 		}

@@ -4,11 +4,10 @@ import { Context } from "../store/appContext";
 export const PrescriptionForm = () => {
   const { store, actions } = useContext(Context);
   const [prescriptionData, setPrescriptionData] = useState({
-    patientName: "",
-    medication: "",
-    dosage: "",
-    frequency: "",
-    comments: "",
+    name_of_medication: "",
+    quantity: "",
+    quantity_of_refills: "",
+    patient_id: "",
   });
 
   const handleChange = (event) => {
@@ -21,23 +20,22 @@ export const PrescriptionForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (
-      prescriptionData.patientName === "" ||
-      prescriptionData.medication === "" ||
-      prescriptionData.dosage === "" ||
-      prescriptionData.frequency === ""
+      prescriptionData.name_of_medication === "" ||
+      prescriptionData.quantity === "" ||
+      prescriptionData.quantity_of_refills === "" ||
+      prescriptionData.patient_id === ""
     ) {
-      alert("All fields except comments are required");
+      alert("All fields are required");
       return;
     }
     const success = await actions.createPrescription(prescriptionData);
     if (success) {
       alert("Prescription created successfully");
       setPrescriptionData({
-        patientName: "",
-        medication: "",
-        dosage: "",
-        frequency: "",
-        comments: "",
+        name_of_medication: "",
+        quantity: "",
+        quantity_of_refills: "",
+        patient_id: "",
       });
     } else {
       alert("Failed to create prescription");
@@ -49,57 +47,48 @@ export const PrescriptionForm = () => {
       <form onSubmit={handleSubmit}>
         <h1 className="text-center text-secondary">Create Prescription</h1>
         <div className="mb-3">
-          <label className="form-label">Patient Name</label>
+          <label className="form-label">Medication Name</label>
           <input
             type="text"
-            name="patientName"
-            value={prescriptionData.patientName}
+            name="name_of_medication"
+            value={prescriptionData.name_of_medication}
             onChange={handleChange}
             className="form-control"
             required
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Medication</label>
+          <label className="form-label">Quantity</label>
           <input
-            type="text"
-            name="medication"
-            value={prescriptionData.medication}
+            type="number"
+            name="quantity"
+            value={prescriptionData.quantity}
             onChange={handleChange}
             className="form-control"
             required
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Dosage</label>
+          <label className="form-label">Quantity of Refills</label>
           <input
-            type="text"
-            name="dosage"
-            value={prescriptionData.dosage}
+            type="number"
+            name="quantity_of_refills"
+            value={prescriptionData.quantity_of_refills}
             onChange={handleChange}
             className="form-control"
             required
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Frequency</label>
+          <label className="form-label">Patient ID</label>
           <input
-            type="text"
-            name="frequency"
-            value={prescriptionData.frequency}
+            type="number"
+            name="patient_id"
+            value={prescriptionData.patient_id}
             onChange={handleChange}
             className="form-control"
             required
           />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Additional Comments</label>
-          <textarea
-            name="comments"
-            value={prescriptionData.comments}
-            onChange={handleChange}
-            className="form-control"
-          ></textarea>
         </div>
         <button type="submit" className="btn btn-dark w-100">
           Submit Prescription
