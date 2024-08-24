@@ -9,38 +9,34 @@ export const Login = () => {
   const [inputValue, setInputValue] = useState({
     email: "",
     password: "",
-    office_key: "",
   });
 
   function handleChange(event) {
     setInputValue({ ...inputValue, [event.target.name]: event.target.value });
   }
 
+  console.log(store.user);
   async function handleSubmit(event) {
     event.preventDefault();
-    if (
-      inputValue.email == "" ||
-      inputValue.password == "" ||
-      inputValue.office_key == ""
-    ) {
+
+    if (inputValue.email == "" || inputValue.password == "") {
       alert("the inputs can not be empty");
       return;
     }
-    if (!params.id) {
-      actions.addContact(inputValue);
-      navigate("/");
+
+    const success = await actions.login({
+      email: inputValue.email,
+      password: inputValue.password,
+    });
+    if (success) {
+      navigate("/protected/profile");
     } else {
-      actions.editContact(inputValue);
-      navigate("/");
+      alert("Unable to log you in.");
     }
   }
-  useEffect(() => {
-    if (params.id && store.contacts.length > 0) {
-      setInputValue(store.contacts.find((item) => item.id == params.id));
-    }
-  }, [params.id, store.contacts]);
+
   return (
-    <div className="container w-25 border border-3 mt-5 maindiv">
+    <div className="container w-25 border border-3 mt-5 maindiv bg-light">
       <form action="" onSubmit={handleSubmit}>
         <h1 className="text-center text-secondary">Login</h1>
         <div>
@@ -48,11 +44,11 @@ export const Login = () => {
             htmlFor=""
             className="form-label text-secondary d-flex justify-content-start"
           >
-            Email
+            Email <span className="text text-danger">*</span>
           </label>
           <input
-            name="name"
-            value={inputValue.name}
+            name="email"
+            value={inputValue.email}
             onChange={(event) => handleChange(event)}
             type="email"
             className="form-control input-back"
@@ -63,28 +59,13 @@ export const Login = () => {
             htmlFor=""
             className="form-label text-secondary d-flex justify-content-start"
           >
-            Password
+            Password <span className="text text-danger">*</span>
           </label>
           <input
-            name="lastName"
-            value={inputValue.lastName}
+            name="password"
+            value={inputValue.password}
             onChange={(event) => handleChange(event)}
-            type="text"
-            className="form-control input-back"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
-            Office key
-          </label>
-          <input
-            name="email"
-            value={inputValue.email}
-            onChange={(event) => handleChange(event)}
-            type="text"
+            type="password"
             className="form-control input-back"
           />
         </div>
@@ -92,10 +73,15 @@ export const Login = () => {
         <div className="d-flex justify-content-center">
           <button
             type="submit"
-            className="btn btn-dark w-50 mt-3 mb-3 saveButton"
+            className="btn btn-dark w-50 mt-3 mb-1 saveButton"
           >
             Login
           </button>
+        </div>
+        <div className="d-flex justify-content-center mb-2">
+          <Link to="/signup">
+            <span>Don't have an account? Sign up!</span>
+          </Link>
         </div>
       </form>
     </div>

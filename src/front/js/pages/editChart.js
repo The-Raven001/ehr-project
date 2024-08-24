@@ -1,9 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
-export const CreateChart = () => {
-  const params = useParams();
+export const EditChart = () => {
   const navigate = useNavigate();
   const { store, actions } = useContext(Context);
   const [selectedGender, setSelectedGender] = useState("Select Gender");
@@ -29,6 +28,34 @@ export const CreateChart = () => {
     coverage_end_date: "",
   });
 
+  useEffect(() => {
+    const patient = store.patient;
+    if (patient) {
+      setInputValue({
+        chart: patient.chart || "",
+        office_id: patient.office_id || "",
+        name: patient.name || "",
+        middle_name: patient.middle_name || "",
+        last_name: patient.last_name || "",
+        address: patient.address || "",
+        phone_number: patient.phone_number || "",
+        email: patient.email || "",
+        dob: patient.dob || "",
+        provider: patient.provider || "",
+        pharmacy_name: patient.pharmacy_name || "",
+        pharmacy_address: patient.pharmacy_address || "",
+        name_of_insurance: patient.name_of_insurance || "",
+        subscriber_id: patient.subscriber_id || "",
+        coverage_start_date: patient.coverage_start_date || "",
+        coverage_end_date: patient.coverage_end_date || "",
+      });
+      setSelectedGender(patient.gender || "Select Gender");
+      setSelectedFinancialClass(
+        patient.financial_class_of_insurance || "Select financial class"
+      );
+    }
+  }, [store.patient]);
+
   function handleChange(event) {
     setInputValue({ ...inputValue, [event.target.name]: event.target.value });
   }
@@ -44,54 +71,49 @@ export const CreateChart = () => {
   async function handleSubmit(event) {
     event.preventDefault();
     if (
-      inputValue.name == "" ||
-      inputValue.last_name == "" ||
-      inputValue.address == "" ||
-      inputValue.phone_number == "" ||
-      inputValue.dob == "" ||
-      inputValue.email == ""
+      inputValue.name === "" ||
+      inputValue.last_name === "" ||
+      inputValue.address === "" ||
+      inputValue.phone_number === "" ||
+      inputValue.dob === "" ||
+      inputValue.email === ""
     ) {
-      alert("Some inputs can not be empty");
+      alert("Some inputs cannot be empty");
       return;
     }
-    if (selectedGender == "Select Gender") {
+    if (selectedGender === "Select Gender") {
       alert("Please select a gender");
+      return;
     }
-
-    if (selectedFinancialClass == "Select financial class") {
+    if (selectedFinancialClass === "Select financial class") {
       alert("Please select a financial class");
+      return;
     }
 
-    const success = await actions.createChart({
-      // Needs fix!!
+    const success = await actions.updateChart(store.patient, {
       chart: inputValue.chart,
-
+      office_id: inputValue.office_id,
       name: inputValue.name,
-      middle_name: inputValue.middleName,
+      middle_name: inputValue.middle_name,
       last_name: inputValue.last_name,
       address: inputValue.address,
       phone_number: inputValue.phone_number,
       email: inputValue.email,
       gender: selectedGender,
       dob: inputValue.dob,
-
-      // Needs fix!!
-      office_id: inputValue.office_id,
-
       name_of_insurance: inputValue.name_of_insurance,
       subscriber_id: inputValue.subscriber_id,
-      subscription_start_date: inputValue.subscription_start_date,
-      subscription_end_date: inputValue.subscription_end_date,
+      coverage_start_date: inputValue.coverage_start_date,
+      coverage_end_date: inputValue.coverage_end_date,
       financial_class_of_insurance: selectedFinancialClass,
-
-      name_of_pharmacy: inputValue.name_of_pharmacy,
-      address_of_pharmacy: inputValue.address_of_pharmacy,
+      pharmacy_name: inputValue.pharmacy_name,
+      pharmacy_address: inputValue.pharmacy_address,
     });
 
     if (success) {
       navigate("/search");
     } else {
-      alert("There was a problem creating the chart");
+      alert("There was a problem updating the chart");
     }
   }
 
@@ -102,7 +124,7 @@ export const CreateChart = () => {
         onSubmit={handleSubmit}
         className="container w-50 border border-3 maindiv mt-5 mb-3 bg-light"
       >
-        <h1 className="text-center text-secondary bg">Add new patient</h1>
+        <h1 className="text-center text-secondary bg">Edit Chart</h1>
         <h3 className="mt-3">Demographics:</h3>
 
         <div className="d-flex row">
@@ -469,7 +491,7 @@ export const CreateChart = () => {
             type="submit"
             className="btn btn-dark w-50 mt-3 mb-3 saveButton"
           >
-            Create
+            Save Changes
           </button>
         </div>
         <div className="d-flex justify-content-center mb-2">
@@ -478,38 +500,6 @@ export const CreateChart = () => {
           </Link>
         </div>
       </form>
-
-      <div className="col-4">
-        <label
-          htmlFor=""
-          className="form-label text-secondary d-flex justify-content-start"
-        >
-          Chart
-        </label>
-        <input
-          name="chart"
-          value={inputValue.chart}
-          onChange={(event) => handleChange(event)}
-          type="number"
-          className="form-control input-back"
-        />
-      </div>
-
-      <div className="col-4">
-        <label
-          htmlFor=""
-          className="form-label text-secondary d-flex justify-content-start"
-        >
-          Office
-        </label>
-        <input
-          name="office_id"
-          value={inputValue.office_id}
-          onChange={(event) => handleChange(event)}
-          type="number"
-          className="form-control input-back"
-        />
-      </div>
     </div>
   );
 };

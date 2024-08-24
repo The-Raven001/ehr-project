@@ -16,12 +16,21 @@ export const Search = () => {
   async function handleSubmit(event) {
     event.preventDefault();
     if (inputValue.chart === "") {
-      alert("the inputs can not be empty");
+      alert("Please enter a chart number");
       return;
+    }
+
+    const success = await actions.search(inputValue.chart);
+
+    if (success) {
+      alert("Patient found");
+      navigate("/chart");
+    } else {
+      alert("Patient not found");
     }
   }
   return (
-    <div className="container w-50 border border-3 mt-5 maindiv">
+    <div className="container w-50 border border-3 mt-5 maindiv bg-light">
       <form action="" onSubmit={handleSubmit}>
         <h2 className="text-center text-secondary">Search patient by chart</h2>
         <div>
