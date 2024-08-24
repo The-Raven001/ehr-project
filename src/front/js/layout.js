@@ -18,12 +18,13 @@ import injectContext from "./store/appContext";
 import { CreateProfile } from "./pages/createProfile";
 
 import { EditProfile } from "./pages/editProfile";
-import { Register } from "./pages/register";
+// import { Register } from "./pages/register";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import { Profile } from "./component/profile";
 import { AuthWrapper } from "./component/authwrapper";
+import UploadDocsForm from "./component/uploadDocsForm";
 
 const Layout = () => {
   const basename = process.env.BASENAME || "";
@@ -39,8 +40,8 @@ const Layout = () => {
           <Routes>
             <Route element={<Home />} path="/" />
 
-            <Route element={<CreateProfile/>} path="/create-profile"/>
-            <Route element={<EditProfile/>}path="/edit-profile"/>
+            <Route element={<CreateProfile />} path="/create-profile" />
+            <Route element={<EditProfile />} path="/edit-profile" />
             <Route element={<SignUp />} path="/signup" />
             <Route element={<Demo />} path="/demo" />
             <Route element={<CreateChart />} path="/create-chart" />
@@ -48,6 +49,7 @@ const Layout = () => {
             <Route element={<EditChart />} path="/edit-chart" />
             <Route element={<Login />} path="/login" />
             <Route element={<Search />} path="/search" />
+            <Route element={<UploadDocsForm />} path="/upload" />
             <Route element={<AuthWrapper />} path="/protected">
               <Route element={<Profile />} path="profile" />
             </Route>
