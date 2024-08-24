@@ -16,6 +16,10 @@ import { EditChart } from "./pages/editChart";
 import injectContext from "./store/appContext";
 
 import { CreateProfile } from "./pages/createProfile";
+
+import { EditProfile } from "./pages/editProfile";
+import { Register } from "./pages/register";
+
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import { Profile } from "./component/profile";
@@ -34,7 +38,9 @@ const Layout = () => {
           <Navbar />
           <Routes>
             <Route element={<Home />} path="/" />
-            <Route element={<CreateProfile />} path="/create-profile" />
+
+            <Route element={<CreateProfile/>} path="/create-profile"/>
+            <Route element={<EditProfile/>}path="/edit-profile"/>
             <Route element={<SignUp />} path="/signup" />
             <Route element={<Demo />} path="/demo" />
             <Route element={<CreateChart />} path="/create-chart" />
