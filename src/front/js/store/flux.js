@@ -99,7 +99,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 			getProfile: async (id) => {
 				try {
-					const response = await fetch(`https://tu-api-endpoint.com/profiles/${id}`);
+					const response = await fetch(`https:/profiles/${id}`);
 					if (response.ok) {
 						const data = await response.json();
 						return data;
@@ -112,6 +112,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return null;
 				}
 			},
+			createPrescription: async (prescriptionData) => {
+				try {
+					const response = await fetch("https://prescriptions", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(prescriptionData),
+					});
+			
+					if (response.ok) {
+						const data = await response.json();
+						console.log("Prescription created successfully", data);
+						return true;
+					} else {
+						const errorData = await response.json();
+						console.error("Error creating prescription:", errorData);
+						return false;
+					}
+				} catch (error) {
+					console.error("Error in createPrescription function:", error);
+					return false;
+				}
+			}
 			
 			
 		}
