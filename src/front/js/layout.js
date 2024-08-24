@@ -14,6 +14,7 @@ import injectContext from "./store/appContext";
 import { CreateProfile } from "./pages/createProfile";
 import { EditProfile } from "./pages/editProfile";
 import { PrescriptionForm } from "./pages/prescriptionForm";
+import { EditPrescriptionForm } from "./pages/editPrescriptionForm";
 import { Register } from "./pages/register";
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -38,6 +39,7 @@ const Layout = () => {
             <Route element={<CreateProfile/>} path="/create-profile"/>
             <Route element={<EditProfile/>}path="/edit-profile"/>
             <Route element={<PrescriptionForm/>}path="/prescription-form"/>
+            <Route element={<EditPrescriptionForm/>}path="edit-prescription"/>
             <Route element={<Demo />} path="/demo" />
             <Route element={<CreateChart />} path="/create-chart" />
             <Route element={<Login />} path="/login" />

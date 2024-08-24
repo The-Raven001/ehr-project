@@ -135,9 +135,53 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Error in createPrescription function:", error);
 					return false;
 				}
+			},
+			getPrescriptionById: async (id) => {
+				try {
+					const response = await fetch(`https://tu-api-endpoint.com/prescriptions/${id}`, {
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					});
+			
+					if (response.ok) {
+						const data = await response.json();
+						return data;
+					} else {
+						console.error("Error fetching prescription:", response.status);
+						return null;
+					}
+				} catch (error) {
+					console.error("Error in getPrescriptionById function:", error);
+					return null;
+				}
+			},
+			
+			updatePrescription: async (id, prescriptionData) => {
+				try {
+					const response = await fetch(`https://prescriptions/${id}`, {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(prescriptionData),
+					});
+			
+					if (response.ok) {
+						const data = await response.json();
+						console.log("Prescription updated successfully", data);
+						return true;
+					} else {
+						const errorData = await response.json();
+						console.error("Error updating prescription:", errorData);
+						return false;
+					}
+				} catch (error) {
+					console.error("Error in updatePrescription function:", error);
+					return false;
+				}
 			}
-			
-			
 			
 		}
 	};
