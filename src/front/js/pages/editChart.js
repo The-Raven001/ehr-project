@@ -1,28 +1,60 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const EditChart = () => {
-  const params = useParams();
   const navigate = useNavigate();
   const { store, actions } = useContext(Context);
   const [selectedGender, setSelectedGender] = useState("Select Gender");
+  const [selectedFinancialClass, setSelectedFinancialClass] = useState(
+    "Select financial class"
+  );
   const [inputValue, setInputValue] = useState({
+    chart: "",
+    office_id: "",
     name: "",
-    middleName: "",
-    lastName: "",
+    middle_name: "",
+    last_name: "",
     address: "",
-    phone: "",
+    phone_number: "",
     email: "",
     dob: "",
     provider: "",
-    pharmacyName: "",
-    pharmacyAddress: "",
-    nameOfInsurance: "",
-    insuranceId: "",
-    coverageStartDate: "",
-    coverageEndDate: "",
+    pharmacy_name: "",
+    pharmacy_address: "",
+    name_of_insurance: "",
+    subscriber_id: "",
+    coverage_start_date: "",
+    coverage_end_date: "",
   });
+
+  useEffect(() => {
+    const patient = store.patient;
+    if (patient) {
+      setInputValue({
+        chart: patient.chart || "",
+        office_id: patient.office_id || "",
+        name: patient.name || "",
+        middle_name: patient.middle_name || "",
+        last_name: patient.last_name || "",
+        address: patient.address || "",
+        phone_number: patient.phone_number || "",
+        email: patient.email || "",
+        dob: patient.dob || "",
+        provider: patient.provider || "",
+        pharmacy_name: patient.pharmacy_name || "",
+        pharmacy_address: patient.pharmacy_address || "",
+        name_of_insurance: patient.name_of_insurance || "",
+        subscriber_id: patient.subscriber_id || "",
+        coverage_start_date: patient.coverage_start_date || "",
+        coverage_end_date: patient.coverage_end_date || "",
+      });
+      setSelectedGender(patient.gender || "Select Gender");
+      setSelectedFinancialClass(
+        patient.financial_class_of_insurance || "Select financial class"
+      );
+    }
+  }, [store.patient]);
 
   function handleChange(event) {
     setInputValue({ ...inputValue, [event.target.name]: event.target.value });
@@ -32,31 +64,67 @@ export const EditChart = () => {
     setSelectedGender(gender);
   }
 
+  function handleFinancialClassSelection(financial_class_of_insurance) {
+    setSelectedFinancialClass(financial_class_of_insurance);
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     if (
-      inputValue.name == "" ||
-      inputValue.lastName == "" ||
-      inputValue.address == "" ||
-      inputValue.phone == "" ||
-      inputValue.dob == ""
+      inputValue.name === "" ||
+      inputValue.last_name === "" ||
+      inputValue.address === "" ||
+      inputValue.phone_number === "" ||
+      inputValue.dob === "" ||
+      inputValue.email === ""
     ) {
-      alert("Some inputs can not be empty");
+      alert("Some inputs cannot be empty");
       return;
     }
-    if (selectedGender == "Select Gender") {
+    if (selectedGender === "Select Gender") {
       alert("Please select a gender");
+      return;
+    }
+    if (selectedFinancialClass === "Select financial class") {
+      alert("Please select a financial class");
+      return;
+    }
+
+    const success = await actions.updateChart(store.patient, {
+      chart: inputValue.chart,
+      office_id: inputValue.office_id,
+      name: inputValue.name,
+      middle_name: inputValue.middle_name,
+      last_name: inputValue.last_name,
+      address: inputValue.address,
+      phone_number: inputValue.phone_number,
+      email: inputValue.email,
+      gender: selectedGender,
+      dob: inputValue.dob,
+      name_of_insurance: inputValue.name_of_insurance,
+      subscriber_id: inputValue.subscriber_id,
+      coverage_start_date: inputValue.coverage_start_date,
+      coverage_end_date: inputValue.coverage_end_date,
+      financial_class_of_insurance: selectedFinancialClass,
+      pharmacy_name: inputValue.pharmacy_name,
+      pharmacy_address: inputValue.pharmacy_address,
+    });
+
+    if (success) {
+      navigate("/search");
+    } else {
+      alert("There was a problem updating the chart");
     }
   }
 
   return (
-    <div className="">
-      <h1 className="text-center text-secondary">Edit chart</h1>
+    <div>
       <form
         action=""
         onSubmit={handleSubmit}
-        className="container w-50 border border-3 maindiv mt-5 mb-3"
+        className="container w-50 border border-3 maindiv mt-5 mb-3 bg-light"
       >
+        <h1 className="text-center text-secondary bg">Edit Chart</h1>
         <h3 className="mt-3">Demographics:</h3>
 
         <div className="d-flex row">
@@ -84,8 +152,8 @@ export const EditChart = () => {
               Middle name (optional):
             </label>
             <input
-              name="lastName"
-              value={inputValue.middleName}
+              name="last_name"
+              value={inputValue.middle_name}
               onChange={(event) => handleChange(event)}
               type="text"
               className="form-control input-back"
@@ -100,8 +168,8 @@ export const EditChart = () => {
               Last name:
             </label>
             <input
-              name="lastName"
-              value={inputValue.lastName}
+              name="last_name"
+              value={inputValue.last_name}
               onChange={(event) => handleChange(event)}
               type="text"
               className="form-control input-back"
@@ -137,8 +205,8 @@ export const EditChart = () => {
                 Phone number:
               </label>
               <input
-                name="phone"
-                value={inputValue.phone}
+                name="phone_number"
+                value={inputValue.phone_number}
                 onChange={(event) => handleChange(event)}
                 type="number"
                 className="form-control input-back"
@@ -164,11 +232,11 @@ export const EditChart = () => {
         </div>
 
         <div className="d-flex row">
-          <div className="col-3">
+          <div className="col-3 text-secondary">
             Gender:
             <div class="dropdown mt-2 me-4">
               <button
-                class="btn btn-secondary dropdown-toggle"
+                class="btn btn-secondary dropdown-toggle px-4"
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
@@ -180,7 +248,7 @@ export const EditChart = () => {
                   <button
                     class="dropdown-item"
                     type="button"
-                    onClick={() => handleGenderSelect("Female")}
+                    onClick={() => handleGenderSelect("female")}
                   >
                     Female
                   </button>
@@ -189,7 +257,7 @@ export const EditChart = () => {
                   <button
                     class="dropdown-item"
                     type="button"
-                    onClick={() => handleGenderSelect("Male")}
+                    onClick={() => handleGenderSelect("male")}
                   >
                     Male
                   </button>
@@ -198,7 +266,7 @@ export const EditChart = () => {
                   <button
                     class="dropdown-item"
                     type="button"
-                    onClick={() => handleGenderSelect("Unspecified")}
+                    onClick={() => handleGenderSelect("unspecified")}
                   >
                     Unspecified
                   </button>
@@ -252,7 +320,7 @@ export const EditChart = () => {
               </label>
               <input
                 name="pharmacy"
-                value={inputValue.pharmacyName}
+                value={inputValue.pharmacy_name}
                 onChange={(event) => handleChange(event)}
                 type="text"
                 className="form-control input-back"
@@ -267,8 +335,8 @@ export const EditChart = () => {
                 Pharmacy's address:
               </label>
               <textarea
-                name="pharmacyAddress"
-                value={inputValue.pharmacyAddress}
+                name="pharmacy_address"
+                value={inputValue.pharmacy_address}
                 onChange={(event) => handleChange(event)}
                 type="text"
                 className="form-control input-back"
@@ -279,7 +347,7 @@ export const EditChart = () => {
           <h3>Insurance details</h3>
 
           <div className="flex row">
-            <div className="col-6">
+            <div className="col-4">
               <label
                 htmlFor=""
                 className="form-label text-secondary d-flex justify-content-start"
@@ -287,15 +355,15 @@ export const EditChart = () => {
                 Name of Insurance:
               </label>
               <input
-                name="NameOfInsurance"
-                value={inputValue.nameOfInsurance}
+                name="Name_of_insurance"
+                value={inputValue.name_of_insurance}
                 onChange={(event) => handleChange(event)}
                 type="text"
                 className="form-control input-back"
               />
             </div>
 
-            <div className="col-6">
+            <div className="col-4">
               <label
                 htmlFor=""
                 className="form-label text-secondary d-flex justify-content-start"
@@ -303,12 +371,84 @@ export const EditChart = () => {
                 Insurance ID:
               </label>
               <input
-                name="insuranceId"
-                value={inputValue.insuranceId}
+                name="subscriber__id"
+                value={inputValue.subscriber_id}
                 onChange={(event) => handleChange(event)}
                 type="text"
                 className="form-control input-back"
               />
+            </div>
+
+            <div className="col-4">
+              <label className="form-label text-secondary d-flex justify-content-start">
+                Financial class:
+              </label>
+              <div className="dropdown">
+                <button
+                  class="btn btn-secondary dropdown-toggle px-4"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  {selectedFinancialClass}
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("hmo")}
+                    >
+                      HMO
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("ppo")}
+                    >
+                      PPO
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("mc")}
+                    >
+                      MEDICARE
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("ml")}
+                    >
+                      MEDICAL
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("mm")}
+                    >
+                      MEDICARE & MEDICAL
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="dropdown-item"
+                      type="button"
+                      onClick={() => handleFinancialClassSelection("sp")}
+                    >
+                      SELF-PAY
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
@@ -321,8 +461,8 @@ export const EditChart = () => {
                 Coverage start date:
               </label>
               <input
-                name="coverageStart"
-                value={inputValue.coverageStartDate}
+                name="coverage_start_date"
+                value={inputValue.coverage_start_date}
                 onChange={(event) => handleChange(event)}
                 type="date"
                 className="form-control input-back"
@@ -337,8 +477,8 @@ export const EditChart = () => {
                 Coverage end date:
               </label>
               <input
-                name="coverageEnd"
-                value={inputValue.coverageEndDate}
+                name="coverage_end_date"
+                value={inputValue.coverage_end_date}
                 onChange={(event) => handleChange(event)}
                 type="date"
                 className="form-control input-back"
@@ -348,11 +488,16 @@ export const EditChart = () => {
         </div>
         <div className="d-flex justify-content-center">
           <button
-            className="btn btn-danger w-50 mt-3 mb-3 saveButton"
             type="submit"
+            className="btn btn-dark w-50 mt-3 mb-3 saveButton"
           >
-            Delete Chart
+            Save Changes
           </button>
+        </div>
+        <div className="d-flex justify-content-center mb-2">
+          <Link to="/search">
+            <span>Go back</span>
+          </Link>
         </div>
       </form>
     </div>

@@ -7,7 +7,6 @@ export const Chart = () => {
   const { store, actions } = useContext(Context);
   const navigate = useNavigate();
 
-  // State variables for patient details
   const [chart, setChart] = useState("");
   const [name, setName] = useState("");
   const [middleName, setMiddleName] = useState("");
@@ -22,14 +21,13 @@ export const Chart = () => {
     const patient = store.patient;
 
     if (patient) {
-      // Set state variables based on the data fetched from backend
       setChart(patient.chart);
       setName(patient.name);
       setMiddleName(patient.middle_name);
       setLastName(patient.last_name);
       setEmail(patient.email);
       setPhone(patient.phone_number);
-      setDob(patient.dob); // Assume 'dob' is formatted properly
+      setDob(patient.dob);
       setInsurance(patient.name_of_insurance);
       setPharmacy(patient.name_of_pharmacy);
     }
@@ -38,10 +36,10 @@ export const Chart = () => {
       alert("There is no patient to show");
       navigate("/search");
     }
-  }, [store.patient]); // Run effect when store.patient changes
+  }, [store.patient]);
 
   const handleEditClick = () => {
-    navigate(`/editchart/${chart}`);
+    navigate(`/edit-chart`);
   };
 
   return (

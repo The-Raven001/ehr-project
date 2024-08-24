@@ -35,17 +35,13 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
       changeColor: (index, color) => {
-        //get the store
         const store = getStore();
 
-        //we have to loop the entire demo array to look for the respective index
-        //and change its color
         const demo = store.demo.map((elm, i) => {
           if (i === index) elm.background = color;
           return elm;
         });
 
-        //reset the global store
         setStore({ demo: demo });
       },
 
@@ -164,11 +160,16 @@ const getState = ({ getStore, getActions, setStore }) => {
         address_of_pharmacy,
       }) => {
         try {
+          const token = localStorage.getItem("token");
+
           const response = await fetch(
-            process.env.BACKEND_URL + "/api/create-chart",
+            process.env.BACKEND_URL + "api/patients",
             {
               method: "POST",
-              headers: { "Content-type": "application/json" },
+              headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
               body: JSON.stringify({
                 chart: chart,
                 name: name,
@@ -220,6 +221,38 @@ const getState = ({ getStore, getActions, setStore }) => {
           setStore({ user: data });
         } catch (error) {
           console.log("Error getting user", error);
+        }
+      },
+
+      updateChart: async (patient) => {
+        try {
+          const token = localStorage.getItem("token");
+
+          const response = await fetch(
+            `${process.env.BACKEND_URL}api/patients`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(patient),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("There was an error updating the patient chart.");
+          }
+
+          const updatedPatient = await response.json();
+          console.log("Patient chart updated successfully:", updatedPatient);
+
+          setStore({ patient: updatedPatient });
+
+          return true;
+        } catch (error) {
+          console.error("Error in updateChart:", error);
+          return false;
         }
       },
     },

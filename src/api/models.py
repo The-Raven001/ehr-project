@@ -100,7 +100,7 @@ class Patient(db.Model):
             "phone_number": self.phone_number,
             "email": self.email,
             "gender": self.gender.value,
-            "dob": self.dob,
+            "dob": self.dob.isoformat(),
             "name_of_insurance": self.name_of_insurance,
             "subscriber_id": self.subscriber_id,
             "financial_class_of_insurance": self.financial_class_of_insurance.value,

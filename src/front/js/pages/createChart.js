@@ -45,7 +45,7 @@ export const CreateChart = () => {
     event.preventDefault();
     if (
       inputValue.name == "" ||
-      inputValue.lastName == "" ||
+      inputValue.last_name == "" ||
       inputValue.address == "" ||
       inputValue.phone_number == "" ||
       inputValue.dob == "" ||
@@ -68,7 +68,7 @@ export const CreateChart = () => {
 
       name: inputValue.name,
       middle_name: inputValue.middleName,
-      last_name: inputValue.lastName,
+      last_name: inputValue.last_name,
       address: inputValue.address,
       phone_number: inputValue.phone_number,
       email: inputValue.email,
@@ -226,7 +226,7 @@ export const CreateChart = () => {
                   <button
                     class="dropdown-item"
                     type="button"
-                    onClick={() => handleGenderSelect("Female")}
+                    onClick={() => handleGenderSelect("female")}
                   >
                     Female
                   </button>
@@ -235,7 +235,7 @@ export const CreateChart = () => {
                   <button
                     class="dropdown-item"
                     type="button"
-                    onClick={() => handleGenderSelect("Male")}
+                    onClick={() => handleGenderSelect("male")}
                   >
                     Male
                   </button>
@@ -244,7 +244,7 @@ export const CreateChart = () => {
                   <button
                     class="dropdown-item"
                     type="button"
-                    onClick={() => handleGenderSelect("Unspecified")}
+                    onClick={() => handleGenderSelect("unspecified")}
                   >
                     Unspecified
                   </button>
