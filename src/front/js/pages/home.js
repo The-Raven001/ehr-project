@@ -8,7 +8,7 @@ export const Home = () => {
 
   return (
     <div className="container bg-light maindiv landing mt-5">
-      <div lassName="text-content textlanding">
+      <div className="text-content textlanding">
         <h1>Secure and Intuitive EHR System</h1>
         <p>
           Streamline your healthcare workflows with our cutting-edge EHR system.

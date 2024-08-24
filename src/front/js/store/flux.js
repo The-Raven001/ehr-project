@@ -171,7 +171,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       getUser: async () => {
         try {
           const token = localStorage.getItem("token");
-          const response = await fetch(process.env.BACKEND_URL + "/api/users", {
+          const response = await fetch(process.env.BACKEND_URL + "api/users", {
             headers: {
               Authorization: `Bearer ${token}`,
             },

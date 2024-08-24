@@ -6,11 +6,32 @@ from api.models import db, User, Patient, Office, Media, UserRole, Prescription,
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from api.firebase_setup import initialize_firebase, get_firestore_client, get_storage_bucket
 
 api = Blueprint('api', __name__)
+initialize_firebase()
+db_firestore = get_firestore_client()
+bucket = get_storage_bucket()
 
 # Allow CORS requests to this API
 CORS(api)
+
+@api.route('/upload', methods=['POST'])
+def handle_upload():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+    blob = bucket.blob(file.filename)
+    blob.upload_from_file(file)
+    blob.make_public()
+    doc_ref = db_firestore.collection('files').document()
+    doc_ref.set({
+        'url': blob.public_url,
+        'name': file.filename
+    })
+    return jsonify({"url": blob.public_url}), 200
 
 @api.route('/signup', methods=['POST'])
 def handle_signup():
@@ -282,7 +303,7 @@ def handle_media(media_id):
 @api.route('/prescriptions', methods=['GET', 'POST'])
 @jwt_required()
 def handle_prescriptions():
-    if reques.method == 'GET':
+    if request.method == 'GET':
         prescriptions= Prescription.query.all()
         return jsonify([prescription.serialize() for prescription in prescriptions]), 200
     if request.method == 'POST':
