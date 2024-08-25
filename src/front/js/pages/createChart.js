@@ -63,9 +63,6 @@ export const CreateChart = () => {
     }
 
     const success = await actions.createChart({
-      // Needs fix!!
-      chart: inputValue.chart,
-
       name: inputValue.name,
       middle_name: inputValue.middleName,
       last_name: inputValue.last_name,
@@ -74,9 +71,6 @@ export const CreateChart = () => {
       email: inputValue.email,
       gender: selectedGender,
       dob: inputValue.dob,
-
-      // Needs fix!!
-      office_id: inputValue.office_id,
 
       name_of_insurance: inputValue.name_of_insurance,
       subscriber_id: inputValue.subscriber_id,
@@ -130,7 +124,7 @@ export const CreateChart = () => {
               Middle name (optional):
             </label>
             <input
-              name="last_name"
+              name="middle_name"
               value={inputValue.middle_name}
               onChange={(event) => handleChange(event)}
               type="text"
@@ -298,7 +292,7 @@ export const CreateChart = () => {
               </label>
               <input
                 name="pharmacy"
-                value={inputValue.pharmacy_name}
+                value={inputValue.name_of_pharmacy}
                 onChange={(event) => handleChange(event)}
                 type="text"
                 className="form-control input-back"
@@ -314,7 +308,7 @@ export const CreateChart = () => {
               </label>
               <textarea
                 name="pharmacy_address"
-                value={inputValue.pharmacy_address}
+                value={inputValue.address_of_pharmacy}
                 onChange={(event) => handleChange(event)}
                 type="text"
                 className="form-control input-back"
@@ -333,7 +327,7 @@ export const CreateChart = () => {
                 Name of Insurance:
               </label>
               <input
-                name="Name_of_insurance"
+                name="name_of_insurance"
                 value={inputValue.name_of_insurance}
                 onChange={(event) => handleChange(event)}
                 type="text"
@@ -349,7 +343,7 @@ export const CreateChart = () => {
                 Insurance ID:
               </label>
               <input
-                name="subscriber__id"
+                name="subscriber_id"
                 value={inputValue.subscriber_id}
                 onChange={(event) => handleChange(event)}
                 type="text"
@@ -478,38 +472,6 @@ export const CreateChart = () => {
           </Link>
         </div>
       </form>
-
-      <div className="col-4">
-        <label
-          htmlFor=""
-          className="form-label text-secondary d-flex justify-content-start"
-        >
-          Chart
-        </label>
-        <input
-          name="chart"
-          value={inputValue.chart}
-          onChange={(event) => handleChange(event)}
-          type="number"
-          className="form-control input-back"
-        />
-      </div>
-
-      <div className="col-4">
-        <label
-          htmlFor=""
-          className="form-label text-secondary d-flex justify-content-start"
-        >
-          Office
-        </label>
-        <input
-          name="office_id"
-          value={inputValue.office_id}
-          onChange={(event) => handleChange(event)}
-          type="number"
-          className="form-control input-back"
-        />
-      </div>
     </div>
   );
 };

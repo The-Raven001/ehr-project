@@ -9,11 +9,14 @@ import { Demo } from "./pages/demo";
 import { CreateChart } from "./pages/createChart";
 import { SignUp } from "./pages/signUp";
 import { Login } from "./pages/login";
-import { Search } from "./pages/searchChart";
+import { Search } from "./component/searchChart";
 import { Chart } from "./pages/chart";
 import { EditChart } from "./pages/editChart";
 import { CreateProfile } from "./pages/createProfile";
 import { EditProfile } from "./pages/editProfile";
+import { PrescriptionForm } from "./pages/prescriptionForm";
+import { EditPrescriptionForm } from "./pages/editPrescriptionForm";
+import { NotFound } from "./pages/notFound";
 
 import injectContext from "./store/appContext";
 
@@ -46,13 +49,20 @@ const Layout = () => {
             <Route element={<EditChart />} path="/edit-chart" />
             <Route element={<Login />} path="/login" />
             <Route element={<EditProfile />} path="/edit-profile" />
+
             <Route element={<Search />} path="/search" />
+
+            <Route element={<PrescriptionForm />} path="/prescription-form" />
+            <Route
+              element={<EditPrescriptionForm />}
+              path="edit-prescription"
+            />
 
             <Route element={<UploadDocsForm />} path="/upload" />
             <Route element={<AuthWrapper />} path="/protected">
               <Route element={<Profile />} path="profile" />
             </Route>
-            <Route element={<h1>Not found!</h1>} />
+            <Route element={<NotFound />} path="/*" />
           </Routes>
           <Footer />
         </ScrollToTop>

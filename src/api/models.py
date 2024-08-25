@@ -143,7 +143,7 @@ class Prescription(db.Model):
     def serialize(self):
         return{
             "id": self.id,
-            "name of medication": self.name_of_medication,
+            "name_of_medication": self.name_of_medication,
             "quantity": self.quantity,
             "quantity_of_refills": self.quantity_of_refills,
             "patient_id": self.patient_id 

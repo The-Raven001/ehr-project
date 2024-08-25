@@ -142,11 +142,6 @@ def handle_create_user():
         return jsonify({"error": error}), 500
 
 
-@api.route('/troncas', methods=['GET'])
-def test_route():
-    return jsonify({"message": "Route is reachable"}), 200
-
-
 @api.route('/patients', methods=['GET', 'POST', 'PUT'])
 @jwt_required()
 def handle_patients():
@@ -326,7 +321,7 @@ def handle_media(media_id):
 
 
 
-@api.route('/prescriptions', methods=['GET', 'POST'])
+""""@api.route('/prescriptions', methods=['GET', 'POST'])
 @jwt_required()
 def handle_prescriptions():
     if request.method == 'GET':
@@ -334,6 +329,31 @@ def handle_prescriptions():
         return jsonify([prescription.serialize() for prescription in prescriptions]), 200
     if request.method == 'POST':
         data = request.get_json()
+        new_prescription = Prescription(
+            name_of_medication=data.get('name_of_medication'),
+            quantity=data.get('quantity'),
+            quantity_of_refills=data.get('quantity_of_refills'),
+            patient_id=data.get('patient_id')
+        )
+
+        db.session.add(new_prescription)
+        db.session.commit()
+        return jsonify(new_prescription.serialize()), 201"""
+
+
+@api.route('/prescriptions', methods=['GET', 'POST'])
+@jwt_required()
+def handle_prescriptions():
+    if request.method == 'GET':
+        patient_id = request.args.get('patient_id')  # Use request.args for GET
+        if patient_id:
+            prescriptions = Prescription.query.filter_by(patient_id=patient_id).all()
+        else:
+            prescriptions = Prescription.query.all()
+        return jsonify([prescription.serialize() for prescription in prescriptions]), 200
+
+    if request.method == 'POST':
+        data = request.get_json()  # Use request.get_json() for POST
         new_prescription = Prescription(
             name_of_medication=data.get('name_of_medication'),
             quantity=data.get('quantity'),
@@ -368,6 +388,8 @@ def handle_prescription(prescription_id):
         db.session.delete(prescription)
         db.session.commit()
         return jsonify({"message": "Prescription deleted"}), 200
+
+
     
 @api.route('/notes', methods=['GET', 'POST'])
 @jwt_required()
