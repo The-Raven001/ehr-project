@@ -1,35 +1,32 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const EditProfile = () => {
+  const navigate = useNavigate();
   const { store, actions } = useContext(Context);
-  const params = useParams();
-
   const [inputValue, setInputValue] = useState({
     name: "",
     lastName: "",
     email: "",
     password: "",
-    userType: "",
   });
 
   useEffect(() => {
-    // Cargar los datos del perfil existente cuando se monta el componente
-    const loadProfile = async () => {
-      const profile = await actions.getProfile(params.id); // Supongamos que existe esta acción en flux
-      if (profile) {
+    actions.getUserProfile().then((user) => {
+      if (user) {
         setInputValue({
-          name: profile.name,
-          lastName: profile.last_name,
-          email: profile.email,
-          password: "", // No cargar la contraseña
-          userType: profile.user_type,
+          name: user.name,
+          lastName: user.last_name,
+          email: user.email,
+          password: "",
         });
+      } else {
+        alert("User not found");
+        navigate("/");
       }
-    };
-    loadProfile();
-  }, [params.id]);
+    });
+  }, []);
 
   function handleChange(event) {
     setInputValue({ ...inputValue, [event.target.name]: event.target.value });
@@ -40,36 +37,35 @@ export const EditProfile = () => {
     if (
       inputValue.name === "" ||
       inputValue.lastName === "" ||
-      inputValue.email === ""
+      inputValue.email === "" ||
+      inputValue.password === ""
     ) {
       alert("The inputs cannot be empty");
       return;
     }
-    const success = await actions.updateProfile(params.id, {
+
+    const success = await actions.updateUserProfile({
       name: inputValue.name,
       last_name: inputValue.lastName,
       email: inputValue.email,
-      password: inputValue.password ? inputValue.password : undefined,
+      password: inputValue.password,
       user_type: inputValue.userType,
     });
 
     if (success) {
-      alert("Profile updated successfully!");
-      history.push("/profiles"); // Redirige a una lista de perfiles o donde sea necesario
+      alert("User updated successfully!");
+      navigate("/");
     } else {
-      alert("Error updating profile");
+      alert("Failed to update user.");
     }
   }
 
   return (
-    <div className="container w-25 border border-3 maindiv">
-      <form action="" onSubmit={handleSubmit}>
+    <div className="container w-25 border border-3 maindiv mt-5 bg-light">
+      <form onSubmit={handleSubmit}>
         <h1 className="text-center text-secondary">Edit Profile</h1>
         <div>
-          <label
-            htmlFor="name"
-            className="form-label text-secondary d-flex justify-content-start"
-          >
+          <label className="form-label text-secondary d-flex justify-content-start">
             Name:
           </label>
           <input
@@ -81,10 +77,7 @@ export const EditProfile = () => {
           />
         </div>
         <div>
-          <label
-            htmlFor="lastName"
-            className="form-label text-secondary d-flex justify-content-start"
-          >
+          <label className="form-label text-secondary d-flex justify-content-start">
             Lastname:
           </label>
           <input
@@ -96,10 +89,7 @@ export const EditProfile = () => {
           />
         </div>
         <div>
-          <label
-            htmlFor="email"
-            className="form-label text-secondary d-flex justify-content-start"
-          >
+          <label className="form-label text-secondary d-flex justify-content-start">
             Email:
           </label>
           <input
@@ -111,10 +101,7 @@ export const EditProfile = () => {
           />
         </div>
         <div>
-          <label
-            htmlFor="password"
-            className="form-label text-secondary d-flex justify-content-start"
-          >
+          <label className="form-label text-secondary d-flex justify-content-start">
             Password:
           </label>
           <input
@@ -123,31 +110,13 @@ export const EditProfile = () => {
             onChange={handleChange}
             type="password"
             className="form-control input-back"
-            placeholder="Leave blank to keep current password"
           />
-        </div>
-        <div>
-          <label
-            htmlFor="userType"
-            className="form-label text-secondary d-flex justify-content-start"
-          >
-            Select role:
-          </label>
-          <select
-            name="userType"
-            className="form-select"
-            value={inputValue.userType}
-            onChange={handleChange}
-          >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
         </div>
         <button
           type="submit"
           className="btn btn-dark w-50 mt-3 mb-3 saveButton w-100"
         >
-          Save Changes
+          Update
         </button>
       </form>
     </div>

@@ -5,12 +5,13 @@ import { Context } from "../store/appContext";
 export const CreateProfile = () => {
   const params = useParams();
   const { store, actions } = useContext(Context);
+  const { userType, setUserType } = useState("Select user");
   const [inputValue, setInputValue] = useState({
     name: "",
     lastName: "",
     email: "",
     password: "",
-    userType: "",
+    role: "user",
   });
 
   function handleChange(event) {
@@ -20,102 +21,100 @@ export const CreateProfile = () => {
   async function handleSubmit(event) {
     event.preventDefault();
     if (
-      inputValue.name == "" ||
-      inputValue.lastName == "" ||
-      inputValue.email == "" ||
-      inputValue.password == ""
+      inputValue.name === "" ||
+      inputValue.lastName === "" ||
+      inputValue.email === "" ||
+      inputValue.password === ""
     ) {
-      alert("the inputs can not be empty");
+      alert("The inputs cannot be empty");
       return;
     }
-    const success = await actions.signUp({
+
+    const success = await actions.createProfile({
       name: inputValue.name,
       last_name: inputValue.lastName,
       email: inputValue.email,
       password: inputValue.password,
-      user_type: inputValue.userType,
+      role: inputValue.role,
     });
+
+    if (success) {
+      alert("User created successfully!");
+      setInputValue({
+        name: "",
+        lastName: "",
+        email: "",
+        password: "",
+        role: "user",
+      });
+    } else {
+      alert("Failed to create user.");
+    }
   }
 
-  console.log(inputValue);
   return (
-    <div className="container w-25 border border-3 maindiv">
-      <form action="" onSubmit={handleSubmit}>
+    <div className="container w-25 border border-3 maindiv bg-light mt-5">
+      <form onSubmit={handleSubmit}>
         <h1 className="text-center text-secondary">
           {params.id ? "Edit contact" : "Create new user"}
         </h1>
         <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
+          <label className="form-label text-secondary d-flex justify-content-start">
             Name:
           </label>
           <input
             name="name"
             value={inputValue.name}
-            onChange={(event) => handleChange(event)}
+            onChange={handleChange}
             type="text"
             className="form-control input-back"
           />
         </div>
         <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
+          <label className="form-label text-secondary d-flex justify-content-start">
             Lastname:
           </label>
           <input
             name="lastName"
             value={inputValue.lastName}
-            onChange={(event) => handleChange(event)}
+            onChange={handleChange}
             type="text"
             className="form-control input-back"
           />
         </div>
         <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
+          <label className="form-label text-secondary d-flex justify-content-start">
             Email:
           </label>
           <input
             name="email"
             value={inputValue.email}
-            onChange={(event) => handleChange(event)}
+            onChange={handleChange}
             type="text"
             className="form-control input-back"
           />
         </div>
         <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
+          <label className="form-label text-secondary d-flex justify-content-start">
             Password:
           </label>
           <input
             name="password"
             value={inputValue.password}
-            onChange={(event) => handleChange(event)}
+            onChange={handleChange}
             type="password"
             className="form-control input-back"
           />
         </div>
         <div>
-          <label
-            htmlFor=""
-            className="form-label text-secondary d-flex justify-content-start"
-          >
+          <label className="form-label text-secondary d-flex justify-content-start">
             Select role:
           </label>
           <select
+            name="userType"
             className="form-select"
-            aria-label="Default select example"
-            defaultValue={"user"}
-            onChange={(event) => handleChange(event)}
+            value={inputValue.role}
+            onChange={handleChange}
           >
             <option value="user">User</option>
             <option value="admin">Admin</option>

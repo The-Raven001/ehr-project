@@ -2,6 +2,7 @@ const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
       patient: null,
+      user: null,
     },
     actions: {
       // Use getActions to call a function within a fuction
@@ -58,7 +59,9 @@ const getState = ({ getStore, getActions, setStore }) => {
           }
           const data = await response.json();
           console.log("Logged in!");
-          setStore({ token: data.access_token });
+
+          setStore({ token: data.access_token, user: data.user });
+          console.log(data);
           localStorage.setItem("token", data.access_token);
           return true;
         } catch (error) {
@@ -218,72 +221,83 @@ const getState = ({ getStore, getActions, setStore }) => {
 
       createProfile: async (userData) => {
         try {
-          const response = await fetch(process.env.BACKEND_URL + "/api/hello", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userData),
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            // Manejar respuesta exitosa
-            console.log("User created successfully", data);
-            return true;
-          } else {
-            const errorData = await response.json();
-            console.error("Error creating user:", errorData);
-            return false;
-          }
-        } catch (error) {
-          console.error("Error in signUp function:", error);
-          return false;
-        }
-      },
-      updateProfile: async (id, userData) => {
-        try {
+          const token = localStorage.getItem("token");
           const response = await fetch(
-            `process.env.BACKEND_URL + "/api/hello"${id}`,
+            process.env.BACKEND_URL + "api/create-profile",
             {
-              method: "PUT",
+              method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify(userData),
             }
           );
 
-          if (response.ok) {
-            const data = await response.json();
-            console.log("Profile updated successfully", data);
-            return true;
-          } else {
+          if (!response.ok) {
             const errorData = await response.json();
-            console.error("Error updating profile:", errorData);
+            console.error("Signup Error:", errorData);
             return false;
           }
+
+          const result = await response.json();
+          console.log("User created successfully:", result);
+          return true;
         } catch (error) {
-          console.error("Error in updateProfile function:", error);
+          console.error("Error creating user:", error);
           return false;
         }
       },
 
-      getProfile: async (id) => {
+      getUserProfile: async () => {
+        const token = localStorage.getItem("token");
+
         try {
           const response = await fetch(
-            `https://tu-api-endpoint.com/profiles/${id}`
+            process.env.BACKEND_URL + "api/user/profile",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
           if (response.ok) {
-            const data = await response.json();
-            return data;
+            const user = await response.json();
+            setStore({ user });
+            return user;
           } else {
-            console.error("Error fetching profile");
+            console.error("Error fetching user profile");
             return null;
           }
         } catch (error) {
-          console.error("Error in getProfile function:", error);
+          console.error("Error fetching user profile", error);
           return null;
+        }
+      },
+
+      updateUserProfile: async (userData) => {
+        try {
+          const response = await fetch(
+            process.env.BACKEND_URL + "api/user/profile",
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: JSON.stringify(userData),
+            }
+          );
+          if (response.ok) {
+            const data = await response.json();
+            return true;
+          }
+          return false;
+        } catch (error) {
+          console.error("Error updating user profile", error);
+          return false;
         }
       },
     },

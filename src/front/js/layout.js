@@ -17,10 +17,6 @@ import { EditProfile } from "./pages/editProfile";
 
 import injectContext from "./store/appContext";
 
-import { CreateProfile } from "./pages/createProfile";
-
-import { EditProfile } from "./pages/editProfile";
-
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import { Profile } from "./component/profile";
@@ -49,7 +45,9 @@ const Layout = () => {
             <Route element={<Chart />} path="/chart" />
             <Route element={<EditChart />} path="/edit-chart" />
             <Route element={<Login />} path="/login" />
+            <Route element={<EditProfile />} path="/edit-profile" />
             <Route element={<Search />} path="/search" />
+
             <Route element={<UploadDocsForm />} path="/upload" />
             <Route element={<AuthWrapper />} path="/protected">
               <Route element={<Profile />} path="profile" />
