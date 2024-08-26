@@ -32,6 +32,7 @@ export const EditChart = () => {
     const patient = store.patient;
     if (patient) {
       setInputValue({
+        id: patient.id,
         chart: patient.chart || "",
         office_id: patient.office_id || "",
         name: patient.name || "",
@@ -53,6 +54,10 @@ export const EditChart = () => {
       setSelectedFinancialClass(
         patient.financial_class_of_insurance || "Select financial class"
       );
+    }
+
+    if (!patient) {
+      navigate("/search");
     }
   }, [store.patient]);
 
@@ -90,7 +95,8 @@ export const EditChart = () => {
       return;
     }
 
-    const success = await actions.updateChart(store.patient, {
+    const success = await actions.updateChart({
+      id: inputValue.id,
       chart: inputValue.chart,
       office_id: inputValue.office_id,
       name: inputValue.name,
@@ -234,19 +240,19 @@ export const EditChart = () => {
         <div className="d-flex row">
           <div className="col-3 text-secondary">
             Gender:
-            <div class="dropdown mt-2 me-4">
+            <div className="dropdown mt-2 me-4">
               <button
-                class="btn btn-secondary dropdown-toggle px-4"
+                className="btn btn-secondary dropdown-toggle px-4"
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
                 {selectedGender}
               </button>
-              <ul class="dropdown-menu">
+              <ul className="dropdown-menu">
                 <li>
                   <button
-                    class="dropdown-item"
+                    className="dropdown-item"
                     type="button"
                     onClick={() => handleGenderSelect("female")}
                   >
@@ -255,7 +261,7 @@ export const EditChart = () => {
                 </li>
                 <li>
                   <button
-                    class="dropdown-item"
+                    className="dropdown-item"
                     type="button"
                     onClick={() => handleGenderSelect("male")}
                   >
@@ -264,7 +270,7 @@ export const EditChart = () => {
                 </li>
                 <li>
                   <button
-                    class="dropdown-item"
+                    className="dropdown-item"
                     type="button"
                     onClick={() => handleGenderSelect("unspecified")}
                   >
@@ -385,17 +391,17 @@ export const EditChart = () => {
               </label>
               <div className="dropdown">
                 <button
-                  class="btn btn-secondary dropdown-toggle px-4"
+                  className="btn btn-secondary dropdown-toggle px-4"
                   type="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
                   {selectedFinancialClass}
                 </button>
-                <ul class="dropdown-menu">
+                <ul className="dropdown-menu">
                   <li>
                     <button
-                      class="dropdown-item"
+                      className="dropdown-item"
                       type="button"
                       onClick={() => handleFinancialClassSelection("hmo")}
                     >
@@ -404,7 +410,7 @@ export const EditChart = () => {
                   </li>
                   <li>
                     <button
-                      class="dropdown-item"
+                      className="dropdown-item"
                       type="button"
                       onClick={() => handleFinancialClassSelection("ppo")}
                     >
@@ -413,7 +419,7 @@ export const EditChart = () => {
                   </li>
                   <li>
                     <button
-                      class="dropdown-item"
+                      className="dropdown-item"
                       type="button"
                       onClick={() => handleFinancialClassSelection("mc")}
                     >
@@ -422,7 +428,7 @@ export const EditChart = () => {
                   </li>
                   <li>
                     <button
-                      class="dropdown-item"
+                      className="dropdown-item"
                       type="button"
                       onClick={() => handleFinancialClassSelection("ml")}
                     >
@@ -431,7 +437,7 @@ export const EditChart = () => {
                   </li>
                   <li>
                     <button
-                      class="dropdown-item"
+                      className="dropdown-item"
                       type="button"
                       onClick={() => handleFinancialClassSelection("mm")}
                     >
@@ -440,7 +446,7 @@ export const EditChart = () => {
                   </li>
                   <li>
                     <button
-                      class="dropdown-item"
+                      className="dropdown-item"
                       type="button"
                       onClick={() => handleFinancialClassSelection("sp")}
                     >

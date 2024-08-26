@@ -96,13 +96,6 @@ def handle_login():
     return jsonify(access_token=access_token), 200
 
 
-@api.route('/hello', methods=['POST', 'GET'])
-def handle_hello():
-
-    response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-    }
-
     return jsonify(response_body), 200
 
 @api.route('/users', methods=['GET', 'PUT', 'DELETE'])
@@ -131,6 +124,34 @@ def handle_user():
         db.session.delete(user)
         db.session.commit()
         return {"message": "User deleted"}, 200
+
+@api.route('/create-profile', methods=['POST'])
+@jwt_required()
+def handle_create_user():
+
+    user = get_jwt_identity()
+    office_id = user["office_id"]
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid data"}), 400
+
+    try:
+        new_user = User(
+            name=data.get('name'),
+            last_name=data.get('last_name'),
+            email=data.get('email'),
+            password=data.get('password'),
+            role=UserRole(data.get('role')),
+            office_id=office_id)
+
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify(new_user.serialize()), 201
+    except Exception as error:
+        db.session.rollback()
+        return jsonify({"error": error}), 500
+
 
 @api.route('/patients', methods=['GET', 'POST', 'PUT'])
 @jwt_required()
@@ -311,7 +332,7 @@ def handle_media(media_id):
 
 
 
-@api.route('/prescriptions', methods=['GET', 'POST'])
+""""@api.route('/prescriptions', methods=['GET', 'POST'])
 @jwt_required()
 def handle_prescriptions():
     if request.method == 'GET':
@@ -319,6 +340,31 @@ def handle_prescriptions():
         return jsonify([prescription.serialize() for prescription in prescriptions]), 200
     if request.method == 'POST':
         data = request.get_json()
+        new_prescription = Prescription(
+            name_of_medication=data.get('name_of_medication'),
+            quantity=data.get('quantity'),
+            quantity_of_refills=data.get('quantity_of_refills'),
+            patient_id=data.get('patient_id')
+        )
+
+        db.session.add(new_prescription)
+        db.session.commit()
+        return jsonify(new_prescription.serialize()), 201"""
+
+
+@api.route('/prescriptions', methods=['GET', 'POST'])
+@jwt_required()
+def handle_prescriptions():
+    if request.method == 'GET':
+        patient_id = request.args.get('patient_id')  # Use request.args for GET
+        if patient_id:
+            prescriptions = Prescription.query.filter_by(patient_id=patient_id).all()
+        else:
+            prescriptions = Prescription.query.all()
+        return jsonify([prescription.serialize() for prescription in prescriptions]), 200
+
+    if request.method == 'POST':
+        data = request.get_json()  # Use request.get_json() for POST
         new_prescription = Prescription(
             name_of_medication=data.get('name_of_medication'),
             quantity=data.get('quantity'),
@@ -353,6 +399,8 @@ def handle_prescription(prescription_id):
         db.session.delete(prescription)
         db.session.commit()
         return jsonify({"message": "Prescription deleted"}), 200
+
+
     
 @api.route('/notes', methods=['GET', 'POST'])
 @jwt_required()
@@ -405,3 +453,56 @@ def handle_get_patient(chart):
     if not patient:
         return jsonify({"error": "chart not found"}), 404
     return jsonify(patient.serialize()), 200
+
+@api.route('/user/profile', methods=['PUT'])
+@jwt_required()
+def update_user_profile():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id["id"])
+    
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "Invalid data"}), 400
+
+    try:
+        user.name = data.get('name', user.name)
+        user.last_name = data.get('last_name', user.last_name)
+        user.email = data.get('email', user.email)
+        if data.get('password'):
+            user.password = data.get('password')
+        user.role = UserRole(data.get('role', user.role))
+        user.office_id = data.get("office_id", user.office_id)
+
+        db.session.commit()
+        return jsonify(user.serialize()), 200
+    except Exception as error:
+        db.session.rollback()
+        return jsonify({"error": str(error)}), 500
+
+@api.route('/user/profile', methods=['GET'])
+@jwt_required()
+def get_user_profile():
+    try:
+        
+        user = get_jwt_identity()
+        user_id = user["id"]
+
+        
+        if user_id is None:
+            return jsonify({"error": "Invalid user ID"}), 400
+        
+
+        user = User.query.get(user_id)
+        
+        if user:
+            return jsonify(user.serialize()), 200
+        else:
+            return jsonify({"error": "User not found"}), 404
+    
+    except Exception as error:
+        return jsonify({"error": error}), 500

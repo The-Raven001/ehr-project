@@ -14,6 +14,7 @@ body {
 .maindiv,
 .saveButton {
   border-radius: 15px;
+  background-color: black;
 }
 
 .saveButton:hover {

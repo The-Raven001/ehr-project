@@ -31,16 +31,31 @@ export const Chart = () => {
       setDob(patient.dob);
       setInsurance(patient.name_of_insurance);
       setPharmacy(patient.name_of_pharmacy);
+
+      actions.getPrescriptions(patient.id);
     }
 
     if (!patient) {
       alert("There is no patient to show");
       navigate("/search");
     }
-  }, [store.patient]);
+  }, [store.patient, navigate]);
 
   const handleEditClick = () => {
-    navigate(`/edit-chart`);
+    navigate("/edit-chart");
+  };
+
+  // New handlers for navigation
+  const navigateToAddDocument = () => {
+    navigate("/add-document");
+  };
+
+  const navigateToAddPrescription = () => {
+    navigate("/prescription-form");
+  };
+
+  const navigateToAddNote = () => {
+    navigate("/add-note");
   };
 
   return (
@@ -69,10 +84,10 @@ export const Chart = () => {
             <strong>Primary Pharmacy:</strong> {pharmacy}
           </p>
           <p>
-            <strong>Phone</strong> {phone}
+            <strong>Phone:</strong> {phone}
           </p>
           <p>
-            <strong>Email</strong> {email}
+            <strong>Email:</strong> {email}
           </p>
         </div>
         <div className="edit-button-container">
@@ -87,10 +102,15 @@ export const Chart = () => {
           <div>
             <h4 className="d-flex justify-content-between">
               <strong>Documents</strong>
-              <i
-                className="fa-solid fa-circle-plus me-3"
-                style={{ color: "#01060e" }}
-              ></i>
+              <button
+                onClick={navigateToAddDocument}
+                className="add-item-button rounded d-flex justify-content-center"
+              >
+                <i
+                  className="fa-solid fa-circle-plus me-3"
+                  style={{ color: "#01060e" }}
+                ></i>
+              </button>
             </h4>
           </div>
           <ul>
@@ -111,36 +131,27 @@ export const Chart = () => {
         <div className="section col-6">
           <h4 className="d-flex justify-content-between">
             <strong>Current Prescriptions</strong>
-            <i
-              className="fa-solid fa-circle-plus me-3"
-              style={{ color: "#01060e" }}
-            ></i>
+            <button
+              onClick={navigateToAddPrescription}
+              className="add-item-button rounded d-flex justify-content-center"
+            >
+              <i
+                className="fa-solid fa-circle-plus me-3"
+                style={{ color: "#01060e" }}
+              ></i>
+            </button>
           </h4>
           <ul>
-            <li>
-              <div className="prescription-details">
-                <span>Metformin</span>
-                <span className="prescription-info">500mg, 2x daily</span>
-              </div>
-              <button className="edit-button mx-2">Edit</button>
-              <button className="delete-button">Delete</button>
-            </li>
-            <li>
-              <div className="prescription-details">
-                <span>Atorvastatin</span>
-                <span className="prescription-info">10mg, 1x daily</span>
-              </div>
-              <button className="edit-button mx-2">Edit</button>
-              <button className="delete-button">Delete</button>
-            </li>
-            <li>
-              <div className="prescription-details">
-                <span>Lisinopril</span>
-                <span className="prescription-info">20mg, 1x daily</span>
-              </div>
-              <button className="edit-button mx-2">Edit</button>
-              <button className="delete-button">Delete</button>
-            </li>
+            {store.prescriptions.map((prescription) => (
+              <li key={prescription.id}>
+                <div className="prescription-details">
+                  <span>{prescription.name_of_medication}</span>
+                  <span className="prescription-info">{`${prescription.quantity}mg, ${prescription.quantity_of_refills}x daily`}</span>
+                </div>
+                <button className="edit-button mx-2">Edit</button>
+                <button className="delete-button">Delete</button>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
@@ -148,10 +159,15 @@ export const Chart = () => {
         <div className="col-12">
           <h4 className="d-flex justify-content-between">
             <strong>Notes of interaction</strong>
-            <i
-              className="fa-solid fa-circle-plus me-3"
-              style={{ color: "#01060e" }}
-            ></i>
+            <button
+              onClick={navigateToAddNote}
+              className="add-item-button rounded d-flex justify-content-center"
+            >
+              <i
+                className="fa-solid fa-circle-plus me-3"
+                style={{ color: "#01060e" }}
+              ></i>
+            </button>
           </h4>
           <ul>
             <li>

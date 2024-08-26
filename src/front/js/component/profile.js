@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet, Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const Profile = () => {
@@ -18,6 +18,12 @@ export const Profile = () => {
       <button onClick={handleLogout} className="btn btn-primary">
         Logout
       </button>
+      <Link to="/edit-profile">
+        <button className="btn btn-dark">Edit Profile</button>
+      </Link>
+      <Link to="/search">
+        <button className="btn btn-dark">Search Chart</button>
+      </Link>
     </div>
   );
 };

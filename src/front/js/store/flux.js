@@ -1,50 +1,14 @@
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
-      message: null,
-      demo: [
-        {
-          title: "FIRST",
-          background: "white",
-          initial: "white",
-        },
-        {
-          title: "SECOND",
-          background: "white",
-          initial: "white",
-        },
-      ],
       patient: null,
+      user: null,
+      prescriptions: [],
     },
     actions: {
       // Use getActions to call a function within a fuction
-      exampleFunction: () => {
-        getActions().changeColor(0, "green");
-      },
 
-      getMessage: async () => {
-        try {
-          // fetching data from the backend
-          const resp = await fetch(process.env.BACKEND_URL + "/api/hello");
-          const data = await resp.json();
-          setStore({ message: data.message });
-          // don't forget to return something, that is how the async resolves
-          return data;
-        } catch (error) {
-          console.log("Error loading message from backend", error);
-        }
-      },
-      changeColor: (index, color) => {
-        const store = getStore();
-
-        const demo = store.demo.map((elm, i) => {
-          if (i === index) elm.background = color;
-          return elm;
-        });
-
-        setStore({ demo: demo });
-      },
-
+      //Users and office
       signUp: async ({
         name_office,
         address,
@@ -98,7 +62,9 @@ const getState = ({ getStore, getActions, setStore }) => {
           }
           const data = await response.json();
           console.log("Logged in!");
-          setStore({ token: data.access_token });
+
+          setStore({ token: data.access_token, user: data.user });
+          console.log(data);
           localStorage.setItem("token", data.access_token);
           return true;
         } catch (error) {
@@ -107,6 +73,109 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
 
+      createProfile: async (userData) => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(
+            process.env.BACKEND_URL + "api/create-profile",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(userData),
+            }
+          );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Signup Error:", errorData);
+            return false;
+          }
+
+          const result = await response.json();
+          console.log("User created successfully:", result);
+          return true;
+        } catch (error) {
+          console.error("Error creating user:", error);
+          return false;
+        }
+      },
+
+      getUserProfile: async () => {
+        const token = localStorage.getItem("token");
+
+        try {
+          const response = await fetch(
+            process.env.BACKEND_URL + "api/user/profile",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (response.ok) {
+            const user = await response.json();
+            setStore({ user });
+            return user;
+          } else {
+            console.error("Error fetching user profile");
+            return null;
+          }
+        } catch (error) {
+          console.error("Error fetching user profile", error);
+          return null;
+        }
+      },
+
+      updateUserProfile: async (userData) => {
+        try {
+          const response = await fetch(
+            process.env.BACKEND_URL + "api/user/profile",
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: JSON.stringify(userData),
+            }
+          );
+          if (response.ok) {
+            const data = await response.json();
+            return true;
+          }
+          return false;
+        } catch (error) {
+          console.error("Error updating user profile", error);
+          return false;
+        }
+      },
+
+      logout: () => {
+        localStorage.removeItem("token");
+        setStore({ token: null, user: null });
+      },
+      getUser: async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(process.env.BACKEND_URL + "api/users", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          console.log(data);
+          setStore({ user: data });
+        } catch (error) {
+          console.log("Error getting user", error);
+        }
+      },
+
+      //Patients
       search: async (chart) => {
         try {
           const token = localStorage.getItem("token");
@@ -204,26 +273,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
 
-      logout: () => {
-        localStorage.removeItem("token");
-        setStore({ token: null, user: null });
-      },
-      getUser: async () => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await fetch(process.env.BACKEND_URL + "api/users", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const data = await response.json();
-          console.log(data);
-          setStore({ user: data });
-        } catch (error) {
-          console.log("Error getting user", error);
-        }
-      },
-
       updateChart: async (patient) => {
         try {
           const token = localStorage.getItem("token");
@@ -255,74 +304,112 @@ const getState = ({ getStore, getActions, setStore }) => {
           return false;
         }
       },
-      createProfile: async (userData) => {
-        try {
-          const response = await fetch(process.env.BACKEND_URL + "/api/hello", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userData),
-          });
 
-          if (response.ok) {
-            const data = await response.json();
-            // Manejar respuesta exitosa
-            console.log("User created successfully", data);
-            return true;
-          } else {
-            const errorData = await response.json();
-            console.error("Error creating user:", errorData);
-            return false;
-          }
-        } catch (error) {
-          console.error("Error in signUp function:", error);
-          return false;
-        }
-      },
-      updateProfile: async (id, userData) => {
+      //Prescriptions
+
+      getPrescriptionById: async (id) => {
         try {
           const response = await fetch(
-            `process.env.BACKEND_URL + "/api/hello"${id}`,
+            process.env.BACKEND_URL + `/prescriptions/${id}`,
             {
-              method: "PUT",
+              method: "GET",
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify(userData),
             }
           );
 
           if (response.ok) {
             const data = await response.json();
-            console.log("Profile updated successfully", data);
+            return data;
+          } else {
+            console.error("Error fetching prescription:", response.status);
+            return null;
+          }
+        } catch (error) {
+          console.error("Error in getPrescriptionById function:", error);
+          return null;
+        }
+      },
+
+      updatePrescription: async (id, prescriptionData) => {
+        try {
+          const response = await fetch(
+            process.env.BACKEND_URL + `/prescriptions/${id}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(prescriptionData),
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Prescription updated successfully", data);
             return true;
           } else {
             const errorData = await response.json();
-            console.error("Error updating profile:", errorData);
+            console.error("Error updating prescription:", errorData);
             return false;
           }
         } catch (error) {
-          console.error("Error in updateProfile function:", error);
+          console.error("Error in updatePrescription function:", error);
           return false;
         }
       },
 
-      getProfile: async (id) => {
+      createPrescription: async (prescriptionData) => {
+        const token = localStorage.getItem("token");
         try {
           const response = await fetch(
-            `https://tu-api-endpoint.com/profiles/${id}`
+            process.env.BACKEND_URL + "api/prescriptions",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(prescriptionData),
+            }
           );
+
           if (response.ok) {
             const data = await response.json();
-            return data;
+            console.log("Prescription created successfully", data);
+            return true;
           } else {
-            console.error("Error fetching profile");
-            return null;
+            const errorData = await response.json();
+            console.error("Error creating prescription:", errorData);
+            return false;
           }
         } catch (error) {
-          console.error("Error in getProfile function:", error);
-          return null;
+          console.error("Error in createPrescription function:", error);
+          return false;
+        }
+      },
+
+      getPrescriptions: async (patientId) => {
+        try {
+          const response = await fetch(
+            `${process.env.BACKEND_URL}api/prescriptions?patient_id=${patientId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          if (response.ok) {
+            const prescriptions = await response.json();
+            setStore({ prescriptions: prescriptions });
+          } else {
+            console.error("Failed to fetch prescriptions.");
+          }
+        } catch (error) {
+          console.error("Error fetching prescriptions:", error);
         }
       },
     },
