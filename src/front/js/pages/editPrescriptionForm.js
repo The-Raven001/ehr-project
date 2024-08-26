@@ -49,7 +49,7 @@ export const EditPrescriptionForm = () => {
     const success = await actions.updatePrescription(id, prescriptionData);
     if (success) {
       alert("Prescription updated successfully");
-      history.push("/prescriptions"); // Redirigir a la lista de prescripciones
+      history.push("/protected/prescriptions"); // Redirigir a la lista de prescripciones
     } else {
       alert("Failed to update prescription");
     }

@@ -1,21 +1,24 @@
 import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 
-const UploadDocsForm = () => {
+const UploadDocsForm = ({ onUploadComplete }) => {
   const [file, setFile] = useState(null);
-  const [message, setMessage] = useState("");
+  const [docType, setDocType] = useState("medical_history");
   const { store } = useContext(Context);
 
   const onFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  console.log(store.patient.id);
+  const onDocTypeChange = (e) => {
+    setDocType(e.target.value);
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("docType", docType);
 
     try {
       const response = await fetch(
@@ -30,20 +33,24 @@ const UploadDocsForm = () => {
       );
       if (response.ok) {
         const data = await response.json();
-        setMessage(`File uploaded successfully on: ${data.url}`);
+        const successMessage = `File uploaded successfully on: ${data.url}`;
+        onUploadComplete(successMessage);
       } else {
         const errorData = await response.json();
-        setMessage(errorData || "There was an error uploading the file");
+        const errorMessage =
+          errorData || "There was an error uploading the file";
+        onUploadComplete(errorMessage);
       }
     } catch (error) {
-      setMessage("There was an error uploading the file");
+      const errorMessage = "There was an error uploading the file";
+      onUploadComplete(errorMessage);
     }
   };
 
   return (
     <div className="d-flex flex-column align-items-center bg-light">
-      <h3>Upload File</h3>
-      {message && <p>{message}</p>}
+      {/* <h3>Upload File</h3> */}
+      {/* {message && <p>{message}</p>} */}
       <form onSubmit={onSubmit} className="p-3 border rounded">
         <div className="mb-3">
           <label htmlFor="fileInput" className="form-label">
@@ -52,12 +59,32 @@ const UploadDocsForm = () => {
           <input
             type="file"
             className="form-control"
-            id="file-input"
+            id="fileInput"
             onChange={onFileChange}
           />
         </div>
+        <div className="mb-3">
+          <label htmlFor="docType" className="form-label">
+            Document Type
+          </label>
+          <select
+            id="docType"
+            className="form-select"
+            value={docType}
+            onChange={onDocTypeChange}
+          >
+            <option value="medical_history">Medical History</option>
+            <option value="lab_results">Lab Results</option>
+            <option value="imaging_reports">Imaging Reports</option>
+          </select>
+        </div>
         <div>
-          <input type="submit" className="btn btn-primary" value="Upload" />
+          <input
+            type="submit"
+            className="btn btn-primary"
+            data-bs-dismiss="modal"
+            value="Upload"
+          />
         </div>
       </form>
     </div>

@@ -17,6 +17,50 @@ export const Chart = () => {
   const [dob, setDob] = useState("");
   const [insurance, setInsurance] = useState("");
   const [pharmacy, setPharmacy] = useState("");
+  const [documents, setDocuments] = useState({
+    medical: "",
+    lab: "",
+    imaging: "",
+  });
+
+  const fetchDocuments = async () => {
+    const response = await fetch(
+      `${process.env.BACKEND_URL}/api/media/${store.patient.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    if (response.ok) {
+      const data = await response.json();
+      if (!data) {
+        return;
+      }
+      const updatedDocuments = { medical: "", lab: "", imaging: "" };
+
+      data.forEach((doc) => {
+        if (doc.document_type === "medical_history") {
+          updatedDocuments.medical = doc.url;
+        } else if (doc.document_type === "lab_results") {
+          updatedDocuments.lab = doc.url;
+        } else if (doc.document_type === "imaging_reports") {
+          updatedDocuments.imaging = doc.url;
+        }
+      });
+
+      setDocuments(updatedDocuments);
+    }
+  };
+
+  useEffect(() => {
+    fetchDocuments();
+  }, [store.patient]);
+
+  const handleUploadComplete = (message) => {
+    fetchDocuments();
+    alert(message);
+  };
 
   useEffect(() => {
     const patient = store.patient;
@@ -42,20 +86,15 @@ export const Chart = () => {
   }, [store.patient, navigate]);
 
   const handleEditClick = () => {
-    navigate("/edit-chart");
-  };
-
-  // New handlers for navigation
-  const navigateToAddDocument = () => {
-    navigate("/add-document");
+    navigate("/protected/edit-chart");
   };
 
   const navigateToAddPrescription = () => {
-    navigate("/prescription-form");
+    navigate("/protected/prescription-form");
   };
 
   const navigateToAddNote = () => {
-    navigate("/add-note");
+    navigate("/protected/add-note");
   };
 
   return (
@@ -103,28 +142,66 @@ export const Chart = () => {
             <h4 className="d-flex justify-content-between">
               <strong>Documents</strong>
               <button
-                onClick={navigateToAddDocument}
+                type="button"
                 className="add-item-button rounded d-flex justify-content-center"
+                data-bs-toggle="modal"
+                data-bs-target="#uploadDocsModal"
               >
                 <i
                   className="fa-solid fa-circle-plus me-3"
                   style={{ color: "#01060e" }}
                 ></i>
               </button>
+
+              <div
+                className="modal fade"
+                id="uploadDocsModal"
+                tabindex="-1"
+                aria-labelledby="uploadDocsModalLabel"
+                aria-hidden="true"
+              >
+                <div className="modal-dialog">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title" id="exampleModalLabel">
+                        Upload File
+                      </h5>
+                      <button
+                        type="button"
+                        className="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div className="modal-body">
+                      <UploadDocsForm onUploadComplete={handleUploadComplete} />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </h4>
           </div>
           <ul>
             <li>
               <span>Medical History</span>
-              <button className="view-button">View</button>
+
+              <a className="btn btn-dark" href={documents.medical}>
+                View
+              </a>
             </li>
             <li>
               <span>Lab Results</span>
-              <button className="view-button">View</button>
+
+              <a className="btn btn-dark" href={documents.lab}>
+                View
+              </a>
             </li>
             <li>
               <span>Imaging Reports</span>
-              <button className="view-button">View</button>
+
+              <a className="btn btn-dark" href={documents.imaging}>
+                View
+              </a>
             </li>
           </ul>
         </div>
@@ -194,7 +271,6 @@ export const Chart = () => {
           </ul>
         </div>
       </div>
-      <UploadDocsForm />
     </div>
   );
 };

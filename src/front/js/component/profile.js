@@ -18,10 +18,10 @@ export const Profile = () => {
       <button onClick={handleLogout} className="btn btn-primary">
         Logout
       </button>
-      <Link to="/edit-profile">
+      <Link to="/protected/edit-profile">
         <button className="btn btn-dark">Edit Profile</button>
       </Link>
-      <Link to="/search">
+      <Link to="/protected/search">
         <button className="btn btn-dark">Search Chart</button>
       </Link>
     </div>

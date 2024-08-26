@@ -57,7 +57,7 @@ export const EditChart = () => {
     }
 
     if (!patient) {
-      navigate("/search");
+      navigate("/protected/search");
     }
   }, [store.patient]);
 
@@ -117,7 +117,7 @@ export const EditChart = () => {
     });
 
     if (success) {
-      navigate("/search");
+      navigate("/protected/search");
     } else {
       alert("There was a problem updating the chart");
     }
