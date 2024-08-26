@@ -3,6 +3,7 @@ const getState = ({ getStore, getActions, setStore }) => {
     store: {
       patient: null,
       user: null,
+      notes: [],
       prescriptions: [],
     },
     actions: {
@@ -381,11 +382,11 @@ const getState = ({ getStore, getActions, setStore }) => {
             return true;
           } else {
             const errorData = await response.json();
-            console.error("Error creating prescription:", errorData);
+            console.log("Error creating prescription:", errorData);
             return false;
           }
         } catch (error) {
-          console.error("Error in createPrescription function:", error);
+          console.log("Error in createPrescription function:", error);
           return false;
         }
       },
@@ -406,10 +407,96 @@ const getState = ({ getStore, getActions, setStore }) => {
             const prescriptions = await response.json();
             setStore({ prescriptions: prescriptions });
           } else {
-            console.error("Failed to fetch prescriptions.");
+            console.log("Failed to fetch prescriptions.");
           }
         } catch (error) {
-          console.error("Error fetching prescriptions:", error);
+          console.log("Error fetching prescriptions:", error);
+        }
+      },
+      addNote: async (noteDta) => {
+        const token = localStorage.getItem("token");
+        try {
+          const response = await fetch(process.env.BACKEND_URL + "api/notes", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(noteDta),
+          });
+          return true;
+        } catch (error) {
+          console.log("Error while creating note:", error);
+          return false;
+        }
+      },
+
+      getNotes: async (patient_id) => {
+        const token = localStorage.getItem("token");
+        try {
+          const response = await fetch(
+            process.env.BACKEND_URL + `api/notes?patient_id=${patient_id}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            setStore({ notes: data });
+          } else {
+            console.error("Failed to fetch notes:", response.statusText);
+          }
+        } catch (error) {
+          console.error("Failed to fetch notes:", error);
+        }
+      },
+      editPrescription: async (prescriptionId, updatedPrescription) => {
+        try {
+          const response = await fetch(
+            process.env.BACKEND_URL + `api/prescriptions/${prescriptionId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(updatedPrescription),
+            }
+          );
+          if (response.ok) {
+            const store = getStore();
+            await getActions().getPrescriptions(store.patient.id);
+          } else {
+            console.error("Failed to edit prescription:", response.statusText);
+          }
+        } catch (error) {
+          console.error("Error editing prescription:", error);
+        }
+      },
+
+      deletePrescription: async (prescriptionId) => {
+        try {
+          const response = await fetch(
+            process.env.BACKEND_URL + `api/prescriptions/${prescriptionId}`,
+            {
+              method: "DELETE",
+            }
+          );
+          if (response.ok) {
+            const store = getStore();
+            await getActions().getPrescriptions(store.patient.id);
+          } else {
+            console.error(
+              "Failed to delete prescription:",
+              response.statusText
+            );
+          }
+        } catch (error) {
+          console.error("Error deleting prescription:", error);
         }
       },
     },

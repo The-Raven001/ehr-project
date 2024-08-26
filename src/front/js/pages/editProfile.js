@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const EditProfile = () => {
@@ -118,6 +118,9 @@ export const EditProfile = () => {
         >
           Update
         </button>
+        <div className="d-flex justify-content-center">
+          <Link to="/protected/profile">Go back</Link>
+        </div>
       </form>
     </div>
   );

@@ -22,6 +22,27 @@ body {
   color: black;
 }
 
+.profileButton {
+  border-radius: 5px;
+  background-color: black;
+}
+
+.profileButton:hover {
+  background-color: white;
+  color: black;
+}
+
+.chartButtonDelete:hover {
+  background-color: red !important;
+  color: white;
+  border: darkred !important;
+}
+
+.chartEditButton:hover {
+  background-color: gray;
+  color: white;
+}
+
 .landing {
   display: flex;
   justify-content: space-between;

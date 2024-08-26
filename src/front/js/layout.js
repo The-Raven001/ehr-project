@@ -9,14 +9,16 @@ import { Demo } from "./pages/demo";
 import { CreateChart } from "./pages/createChart";
 import { SignUp } from "./pages/signUp";
 import { Login } from "./pages/login";
-import { Search } from "./component/searchChart";
+import { Search } from "./pages/searchChart";
 import { Chart } from "./pages/chart";
 import { EditChart } from "./pages/editChart";
 import { CreateProfile } from "./pages/createProfile";
 import { EditProfile } from "./pages/editProfile";
 import { PrescriptionForm } from "./pages/prescriptionForm";
-import { EditPrescriptionForm } from "./pages/editPrescriptionForm";
+import { EditPrescription } from "./pages/editPrescription";
 import { NotFound } from "./pages/notFound";
+import { AddNote } from "./pages/addNote";
+import { AboutUs } from "./pages/aboutUs";
 
 import injectContext from "./store/appContext";
 
@@ -54,14 +56,17 @@ const Layout = () => {
 
             <Route element={<PrescriptionForm />} path="/prescription-form" />
             <Route
-              element={<EditPrescriptionForm />}
-              path="edit-prescription"
+              path="/edit-prescription/:prescriptionId"
+              element={<EditPrescription />}
             />
+
+            <Route element={<AddNote />} path="/add-note" />
 
             <Route element={<UploadDocsForm />} path="/upload" />
             <Route element={<AuthWrapper />} path="/protected">
               <Route element={<Profile />} path="profile" />
             </Route>
+            <Route element={<AboutUs />} path="/about-us" />
             <Route element={<NotFound />} path="/*" />
           </Routes>
           <Footer />

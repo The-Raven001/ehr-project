@@ -30,7 +30,7 @@ export const Search = () => {
     }
   }
   return (
-    <div className="container w-50 border border-3 mt-5 maindiv bg-light">
+    <div className="container w-25 border border-3 mt-5 maindiv bg-light">
       <form action="" onSubmit={handleSubmit}>
         <h2 className="text-center text-secondary">Search patient by chart</h2>
         <div>
@@ -56,6 +56,9 @@ export const Search = () => {
             Search
           </button>
         </div>
+        <Link to="/protected/profile" className="d-flex justify-content-center">
+          Go back
+        </Link>
       </form>
     </div>
   );

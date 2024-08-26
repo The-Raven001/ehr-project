@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import "../../styles/chart.css";
 import { Context } from "../store/appContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export const Chart = () => {
   const { store, actions } = useContext(Context);
@@ -32,6 +32,7 @@ export const Chart = () => {
       setPharmacy(patient.name_of_pharmacy);
 
       actions.getPrescriptions(patient.id);
+      actions.getNotes(patient.id);
     }
 
     if (!patient) {
@@ -44,7 +45,6 @@ export const Chart = () => {
     navigate("/edit-chart");
   };
 
-  // New handlers for navigation
   const navigateToAddDocument = () => {
     navigate("/add-document");
   };
@@ -57,8 +57,23 @@ export const Chart = () => {
     navigate("/add-note");
   };
 
+  const handleEditPrescription = (prescriptionId) => {
+    navigate(`/prescription-form/${prescriptionId}`);
+  };
+
+  const handleDeletePrescription = async (prescriptionId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this prescription?"
+    );
+    if (confirmed) {
+      await actions.deletePrescription(prescriptionId);
+      actions.getPrescriptions(store.patient.id);
+    }
+  };
+
   return (
     <div className="patient-info">
+      <Link to="/search">Back to search</Link>
       <div className="patient-header">
         <div className="patient-profile">
           <div className="patient-avatar">
@@ -90,12 +105,14 @@ export const Chart = () => {
           </p>
         </div>
         <div className="edit-button-container">
-          <button className="edit-chart-button" onClick={handleEditClick}>
+          <button
+            className="edit-chart-button rounded bg-dark text-light"
+            onClick={handleEditClick}
+          >
             Edit Chart
           </button>
         </div>
       </div>
-
       <div className="patient-records row">
         <div className="section col-6">
           <div>
@@ -147,8 +164,28 @@ export const Chart = () => {
                   <span>{prescription.name_of_medication}</span>
                   <span className="prescription-info">{`${prescription.quantity}mg, ${prescription.quantity_of_refills}x daily`}</span>
                 </div>
-                <button className="edit-button mx-2">Edit</button>
-                <button className="delete-button">Delete</button>
+                <button
+                  className="edit-button mx-2 chartEditButton d-flex align-items-center"
+                  onClick={() =>
+                    navigate(`/edit-prescription/${prescription.id}`)
+                  }
+                >
+                  <i
+                    className="fa-solid fa-pencil me-2"
+                    styleName="color: #000000;"
+                  ></i>
+                  Edit
+                </button>
+                <button
+                  className="delete-button chartButtonDelete d-flex align-items-center"
+                  onClick={() => handleDeletePrescription(prescription.id)}
+                >
+                  <i
+                    className="fa-solid fa-trash-can me-2"
+                    styleName="color: #000000;"
+                  ></i>
+                  Delete
+                </button>
               </li>
             ))}
           </ul>
@@ -169,27 +206,20 @@ export const Chart = () => {
             </button>
           </h4>
           <ul>
-            <li>
-              <h5>Title of note</h5>
-              <p>
-                These will be the notes of the provider or any employee for the
-                clinic.
-              </p>
-            </li>
-            <li>
-              <h5>Title of note</h5>
-              <p>
-                These will be the notes of the provider or any employee for the
-                clinic.
-              </p>
-            </li>
-            <li>
-              <h5>Title of note</h5>
-              <p>
-                These will be the notes of the provider or any employee for the
-                clinic.
-              </p>
-            </li>
+            {store.notes && store.notes.length > 0 ? (
+              store.notes.map((note) => (
+                <div key={note.id}>
+                  <h5>{note.title}</h5>
+                  <div className="border rounded mb-3">
+                    <li>
+                      <p>{note.content}</p>
+                    </li>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <li>No notes available</li>
+            )}
           </ul>
         </div>
       </div>
