@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { Context } from "../store/appContext";
 
 const UploadDocsForm = () => {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
+  const { store } = useContext(Context);
 
   const onFileChange = (e) => {
     setFile(e.target.files[0]);
   };
+
+  console.log(store.patient.id);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -14,13 +18,16 @@ const UploadDocsForm = () => {
     formData.append("file", file);
 
     try {
-      const response = await fetch(`${process.env.BACKEND_URL}/api/upload`, {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await fetch(
+        `${process.env.BACKEND_URL}/api/upload/${store.patient.id}`,
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       if (response.ok) {
         const data = await response.json();
         setMessage(`File uploaded successfully on: ${data.url}`);

@@ -27,7 +27,7 @@ import { AuthWrapper } from "./component/authwrapper";
 import UploadDocsForm from "./component/uploadDocsForm";
 
 const Layout = () => {
-  const basename = process.env.BASENAME || "";
+  const basename = "/" || "";
 
   if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "")
     return <BackendURL />;

@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import "../../styles/chart.css";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
+import UploadDocsForm from "../component/uploadDocsForm";
 
 export const Chart = () => {
   const { store, actions } = useContext(Context);
@@ -177,6 +178,7 @@ export const Chart = () => {
           </ul>
         </div>
       </div>
+      <UploadDocsForm />
     </div>
   );
 };

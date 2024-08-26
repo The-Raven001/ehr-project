@@ -16,13 +16,17 @@ bucket = get_storage_bucket()
 # Allow CORS requests to this API
 CORS(api)
 
-@api.route('/upload', methods=['POST'])
-def handle_upload():
+@api.route('/upload/<int:patient_id>', methods=['POST'])
+def handle_upload(patient_id):
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
     file = request.files['file']
+    if not patient_id: 
+        return jsonify({"error": "No user ID provided"}), 400
+
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
+    
     blob = bucket.blob(file.filename)
     blob.upload_from_file(file)
     blob.make_public()
@@ -31,7 +35,14 @@ def handle_upload():
         'url': blob.public_url,
         'name': file.filename
     })
-    return jsonify({"url": blob.public_url}), 200
+    media_data = Media(
+        patient_id = patient_id,
+        document_name = file.filename,
+        document_url = blob.public_url
+    )
+    db.session.add(media_data)
+    db.session.commit()
+    return jsonify({"url": blob.public_url, "message": "File uploaded and metadata saved"}), 200
 
 @api.route('/signup', methods=['POST'])
 def handle_signup():
