@@ -24,8 +24,8 @@ export const EditChart = () => {
     pharmacy_address: "",
     name_of_insurance: "",
     subscriber_id: "",
-    coverage_start_date: "",
-    coverage_end_date: "",
+    coverage_start_date: "" || null,
+    coverage_end_date: "" || null,
   });
 
   useEffect(() => {
@@ -467,8 +467,8 @@ export const EditChart = () => {
                 Coverage start date:
               </label>
               <input
-                name="coverage_start_date"
-                value={inputValue.coverage_start_date}
+                name="subscription_start_date"
+                value={inputValue.subscription_start_date}
                 onChange={(event) => handleChange(event)}
                 type="date"
                 className="form-control input-back"
@@ -483,8 +483,8 @@ export const EditChart = () => {
                 Coverage end date:
               </label>
               <input
-                name="coverage_end_date"
-                value={inputValue.coverage_end_date}
+                name="subscription_end_date"
+                value={inputValue.subscription_end_date}
                 onChange={(event) => handleChange(event)}
                 type="date"
                 className="form-control input-back"
