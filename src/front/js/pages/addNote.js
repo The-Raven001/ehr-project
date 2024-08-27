@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export const AddNote = () => {
   const navigate = useNavigate();
@@ -88,6 +88,9 @@ export const AddNote = () => {
         >
           Save note
         </button>
+        <Link to="/protected/chart" className="d-flex justify-content-center">
+          Go Back
+        </Link>
       </form>
     </div>
   );

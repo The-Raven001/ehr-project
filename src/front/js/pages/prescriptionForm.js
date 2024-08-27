@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export const PrescriptionForm = () => {
   const navigate = useNavigate();
@@ -57,6 +57,8 @@ export const PrescriptionForm = () => {
         quantity: "",
         quantity_of_refills: "",
       });
+
+      navigate("/protected/chart");
     } else {
       alert("Failed to create prescription");
     }
@@ -105,6 +107,9 @@ export const PrescriptionForm = () => {
         >
           Submit prescription
         </button>
+        <Link to="/protected/chart" className="d-flex justify-content-center">
+          Go Back
+        </Link>
       </form>
     </div>
   );

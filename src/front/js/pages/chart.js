@@ -87,7 +87,7 @@ export const Chart = () => {
   }, [store.patient, navigate]);
 
   const handleEditClick = () => {
-    navigate("/edit-chart");
+    navigate("/protected/edit-chart");
   };
 
   const navigateToAddDocument = () => {
@@ -118,7 +118,7 @@ export const Chart = () => {
 
   return (
     <div className="patient-info">
-      <Link to="/search">Back to search</Link>
+      <Link to="/protected/search">Back to search</Link>
       <div className="patient-header">
         <div className="patient-profile">
           <div className="patient-avatar">
@@ -245,12 +245,12 @@ export const Chart = () => {
               <li key={prescription.id}>
                 <div className="prescription-details">
                   <span>{prescription.name_of_medication}</span>
-                  <span className="prescription-info">{`${prescription.quantity}mg, ${prescription.quantity_of_refills}x daily`}</span>
+                  <span className="prescription-info">{`${prescription.quantity}mg, ${prescription.quantity_of_refills}x refills left`}</span>
                 </div>
                 <button
                   className="edit-button mx-2 chartEditButton d-flex align-items-center"
                   onClick={() =>
-                    navigate(`/edit-prescription/${prescription.id}`)
+                    navigate(`/protected/edit-prescription/${prescription.id}`)
                   }
                 >
                   <i
@@ -295,7 +295,7 @@ export const Chart = () => {
                   <h5>{note.title}</h5>
                   <div className="border rounded mb-3">
                     <li>
-                      <p>{note.content}</p>
+                      <p className="m-2">{note.content}</p>
                     </li>
                   </div>
                 </div>

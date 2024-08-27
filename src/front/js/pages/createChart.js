@@ -25,8 +25,8 @@ export const CreateChart = () => {
     pharmacy_address: "",
     name_of_insurance: "",
     subscriber_id: "",
-    coverage_start_date: "",
-    coverage_end_date: "",
+    subscription_start_date: "" || null,
+    subscription_end_date: "" || null,
   });
 
   function handleChange(event) {
@@ -291,7 +291,7 @@ export const CreateChart = () => {
                 Name of pharmacy:
               </label>
               <input
-                name="pharmacy"
+                name="name_of_pharmacy"
                 value={inputValue.name_of_pharmacy}
                 onChange={(event) => handleChange(event)}
                 type="text"
@@ -307,7 +307,7 @@ export const CreateChart = () => {
                 Pharmacy's address:
               </label>
               <textarea
-                name="pharmacy_address"
+                name="address_pharmacy_address"
                 value={inputValue.address_of_pharmacy}
                 onChange={(event) => handleChange(event)}
                 type="text"
@@ -433,8 +433,8 @@ export const CreateChart = () => {
                 Coverage start date:
               </label>
               <input
-                name="coverage_start_date"
-                value={inputValue.coverage_start_date}
+                name="subscription_start_date"
+                value={inputValue.subscription_start_date}
                 onChange={(event) => handleChange(event)}
                 type="date"
                 className="form-control input-back"
@@ -449,8 +449,8 @@ export const CreateChart = () => {
                 Coverage end date:
               </label>
               <input
-                name="coverage_end_date"
-                value={inputValue.coverage_end_date}
+                name="subscription_end_date"
+                value={inputValue.subscription_end_date}
                 onChange={(event) => handleChange(event)}
                 type="date"
                 className="form-control input-back"
@@ -467,7 +467,7 @@ export const CreateChart = () => {
           </button>
         </div>
         <div className="d-flex justify-content-center mb-2">
-          <Link to="/search">
+          <Link to="/protected/profile">
             <span>Go back</span>
           </Link>
         </div>
