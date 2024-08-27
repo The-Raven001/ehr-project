@@ -320,32 +320,11 @@ def handle_media(media_id):
         return {"message": "Media deleted"}, 200
 
 
-
-""""@api.route('/prescriptions', methods=['GET', 'POST'])
-@jwt_required()
-def handle_prescriptions():
-    if request.method == 'GET':
-        prescriptions= Prescription.query.all()
-        return jsonify([prescription.serialize() for prescription in prescriptions]), 200
-    if request.method == 'POST':
-        data = request.get_json()
-        new_prescription = Prescription(
-            name_of_medication=data.get('name_of_medication'),
-            quantity=data.get('quantity'),
-            quantity_of_refills=data.get('quantity_of_refills'),
-            patient_id=data.get('patient_id')
-        )
-
-        db.session.add(new_prescription)
-        db.session.commit()
-        return jsonify(new_prescription.serialize()), 201"""
-
-
 @api.route('/prescriptions', methods=['GET', 'POST'])
 @jwt_required()
 def handle_prescriptions():
     if request.method == 'GET':
-        patient_id = request.args.get('patient_id')  # Use request.args for GET
+        patient_id = request.args.get('patient_id') 
         if patient_id:
             prescriptions = Prescription.query.filter_by(patient_id=patient_id).all()
         else:
@@ -353,7 +332,7 @@ def handle_prescriptions():
         return jsonify([prescription.serialize() for prescription in prescriptions]), 200
 
     if request.method == 'POST':
-        data = request.get_json()  # Use request.get_json() for POST
+        data = request.get_json() 
         new_prescription = Prescription(
             name_of_medication=data.get('name_of_medication'),
             quantity=data.get('quantity'),
@@ -365,38 +344,44 @@ def handle_prescriptions():
         db.session.commit()
         return jsonify(new_prescription.serialize()), 201
 
-@api.route('/prescriptions/<int:prescription_id>', methods=['GET', 'PUT', 'DELETE'])
-@jwt_required()
-def handle_prescription(prescription_id):
+@api.route('/prescriptions/<int:prescription_id>', methods=['PUT'])
+def edit_prescription(prescription_id):
+    data = request.json
     prescription = Prescription.query.get(prescription_id)
+
     if not prescription:
         return jsonify({"error": "Prescription not found"}), 404
 
-    if request.method == 'GET':
-        return prescription.serialize(), 200
-
-    if request.method == 'PUT':
-        data = request.get_json()
-        prescription.name_of_medication = data.get('name_of_medication')
-        prescription.quantity = data.get('quantity')
-        prescription.quantity_of_refills = data.get('quantity_of_refills')
-
+    try:
+        prescription.name_of_medication = data.get('name_of_medication', prescription.name_of_medication)
+        prescription.quantity = data.get('quantity', prescription.quantity)
+        prescription.quantity_of_refills = data.get('quantity_of_refills', prescription.quantity_of_refills)
         db.session.commit()
-        return jsonify(prescription.serialize()), 200
+        return jsonify(prescription.serialize())
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
-    if request.method == 'DELETE':
+
+@api.route('/prescriptions/<int:prescription_id>', methods=['DELETE'])
+def delete_prescription(prescription_id):
+    prescription = Prescription.query.get(prescription_id)
+
+    if not prescription:
+        return jsonify({"error": "Prescription not found"}), 404
+
+    try:
         db.session.delete(prescription)
         db.session.commit()
-        return jsonify({"message": "Prescription deleted"}), 200
-
+        return '', 204  
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
     
-@api.route('/notes', methods=['GET', 'POST'])
+@api.route('/notes', methods=['POST'])
 @jwt_required()
 def handle_notes():
-    if request.method == 'GET':
-        notes = Note.query.all()
-        return jsonify([note.serialize() for note in notes]), 200
     if request.method == 'POST':
         data = request.get_json()
         new_note = Note(
@@ -408,32 +393,19 @@ def handle_notes():
         db.session.commit()
         return jsonify(new_note.serialize()), 201
 
-@api.route('/notes/<int:note_id>', methods=['GET', 'PUT', 'DELETE'])
+@api.route('/notes', methods=['GET'])
 @jwt_required()
-def handle_note(note_id):
-    note = Note.query.get(note_id)
-    if not note:
-        return jsonify({"error": "Note not found"}), 404
+def get_notes():
+    try:
+        patient_id = request.args.get('patient_id')
+        if not patient_id:
+            return jsonify({"error": "patient_id is required"}), 400
 
-    if request.method == 'GET':
-        return jsonify(note.serialize()), 200
-
-    if request.method == 'PUT':
-        data = request.get_json()
-
-        note.title = data.get('title')
-        note.content = data.get('content')
-        note.patient_id = data.get('patient_id')
-
-        db.session.commit()
-        return jsonify(note.serialize()), 200
-
-    if request.method == 'DELETE':
-        db.session.delete(note)
-        db.session.commit()
-        return jsonify({"message": "Note deleted"}), 200
-
-#patient = Patient.query.filter_by(office_id=user["office_id"], chart=data.get("chart")).first()
+        notes = Note.query.filter_by(patient_id=patient_id).all()
+        return jsonify([note.serialize() for note in notes]), 200
+    except Exception as error:
+        return jsonify("Error while getting notes:", str(error))
+    
 @api.route('/search/<int:chart>', methods=['GET'])
 @jwt_required()
 def handle_get_patient(chart):
@@ -477,17 +449,11 @@ def update_user_profile():
 @jwt_required()
 def get_user_profile():
     try:
-        
         user = get_jwt_identity()
         user_id = user["id"]
-
-        
         if user_id is None:
             return jsonify({"error": "Invalid user ID"}), 400
-        
-
-        user = User.query.get(user_id)
-        
+        user = User.query.get(user_id)        
         if user:
             return jsonify(user.serialize()), 200
         else:

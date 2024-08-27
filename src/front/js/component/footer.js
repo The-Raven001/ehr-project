@@ -1,7 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
 
 export const Footer = () => (
   <footer className="footer mt-auto py-3 text-center">
-    <p className="text-light">Under work</p>
+    <a className="text-light" href="/about-us">
+      About us
+    </a>
   </footer>
 );

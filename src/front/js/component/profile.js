@@ -12,18 +12,24 @@ export const Profile = () => {
   };
 
   return (
-    <div className="bg-light d-flex justify-content-center align-items-center flex-column">
-      <h1>Profile</h1>
-      <p>Welcome {store.user ? store.user.name : ""}</p>
-      <button onClick={handleLogout} className="btn btn-primary">
-        Logout
-      </button>
-      <Link to="/edit-profile">
-        <button className="btn btn-dark">Edit Profile</button>
-      </Link>
-      <Link to="/search">
-        <button className="btn btn-dark">Search Chart</button>
-      </Link>
+    <div className="d-flex justify-content-center ">
+      <div className="bg-light d-flex justify-content-center align-items-center flex-column mt-5 maindiv w-25">
+        <h1>Welcome!</h1>
+        <div className="d-flex mb-3">
+          <Link to="/edit-profile" className="me-5">
+            <button className="btn btn-dark profileButton">Edit Profile</button>
+          </Link>
+          <Link to="/search" className="me-2">
+            <button className="btn btn-dark profileButton">Search Chart</button>
+          </Link>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="btn btn-dark me-2 mb-3 profileButton"
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 };
