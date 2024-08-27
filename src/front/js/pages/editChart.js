@@ -501,7 +501,7 @@ export const EditChart = () => {
           </button>
         </div>
         <div className="d-flex justify-content-center mb-2">
-          <Link to="/chart">
+          <Link to="/protected/chart">
             <span>Go back</span>
           </Link>
         </div>

@@ -80,8 +80,8 @@ class Patient(db.Model):
 #Insurance
     name_of_insurance = db.Column(db.String(100))
     subscriber_id = db.Column(db.String(50))
-    subscription_start_date = db.Column(Date)
-    subscription_end_date = db.Column(Date)
+    subscription_start_date = db.Column(db.Date)
+    subscription_end_date = db.Column(db.Date)
     financial_class_of_insurance = db.Column(SqlEnum(FinancialClass), nullable=False)
 
 #Pharmacy

@@ -62,9 +62,7 @@ export const EditPrescription = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="quantityOfRefills">
-            Quantity of Refills (times daily)
-          </label>
+          <label htmlFor="quantityOfRefills">Quantity of Refills</label>
           <input
             type="number"
             className="form-control"
