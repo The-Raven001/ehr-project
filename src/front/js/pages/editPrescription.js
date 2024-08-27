@@ -22,7 +22,7 @@ export const EditPrescription = () => {
       setQuantityOfRefills(prescription.quantity_of_refills);
     } else {
       alert("Prescription not found");
-      navigate(-1); // Navigate back if prescription not found
+      navigate(-1);
     }
   }, [prescriptionId, store.prescriptions, navigate]);
 
@@ -34,7 +34,7 @@ export const EditPrescription = () => {
     };
 
     await actions.editPrescription(prescriptionId, updatedPrescription);
-    navigate(-1); // Go back to the previous page after saving
+    navigate(-1);
   };
 
   return (

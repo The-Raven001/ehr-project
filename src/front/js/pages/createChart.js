@@ -83,7 +83,7 @@ export const CreateChart = () => {
     });
 
     if (success) {
-      navigate("/search");
+      navigate("/protected/search");
     } else {
       alert("There was a problem creating the chart");
     }

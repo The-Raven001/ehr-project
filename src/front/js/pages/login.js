@@ -15,7 +15,6 @@ export const Login = () => {
     setInputValue({ ...inputValue, [event.target.name]: event.target.value });
   }
 
-  console.log(store.user);
   async function handleSubmit(event) {
     event.preventDefault();
 

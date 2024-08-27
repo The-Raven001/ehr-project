@@ -7,6 +7,7 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from api.firebase_setup import initialize_firebase, get_firestore_client, get_storage_bucket
+from datetime import datetime
 
 api = Blueprint('api', __name__)
 initialize_firebase()
@@ -16,23 +17,48 @@ bucket = get_storage_bucket()
 # Allow CORS requests to this API
 CORS(api)
 
-@api.route('/upload', methods=['POST'])
-def handle_upload():
+@api.route('/upload/<int:patient_id>', methods=['POST'])
+def handle_upload(patient_id):
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
     file = request.files['file']
+    if not patient_id: 
+        return jsonify({"error": "No user ID provided"}), 400
+
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
+
+    document_type = request.form.get('docType')
+    if not document_type:
+        return jsonify({"error": "No document type provided"}), 400
+
+    valid_document_types = ["medical_history", "lab_results", "imaging_reports"]
+    if document_type not in valid_document_types:
+        return jsonify({"error": "Invalid document type"}), 400
+
     blob = bucket.blob(file.filename)
     blob.upload_from_file(file)
     blob.make_public()
-    doc_ref = db_firestore.collection('files').document()
-    doc_ref.set({
-        'url': blob.public_url,
-        'name': file.filename
-    })
-    return jsonify({"url": blob.public_url}), 200
 
+    existing_document = Media.query.filter_by(patient_id=patient_id, document_type=document_type).first()
+
+    if existing_document:
+        existing_document.document_url = blob.public_url
+        existing_document.document_name = file.filename
+        existing_document.upload_date = datetime.utcnow()
+        db.session.commit()
+        return jsonify({"url": blob.public_url, "message": "File uploaded and metadata updated"}), 200
+    else:
+        media_data = Media(
+            patient_id=patient_id,
+            document_name=file.filename,
+            document_url=blob.public_url,
+            document_type=document_type
+        )
+        db.session.add(media_data)
+        db.session.commit()
+        return jsonify({"url": blob.public_url, "message": "File uploaded and metadata saved"}), 200
+    
 @api.route('/signup', methods=['POST'])
 def handle_signup():
     data = request.get_json()
@@ -84,13 +110,11 @@ def handle_login():
     access_token = create_access_token({"id": user.id, "office_id": user.office_id})
     return jsonify(access_token=access_token), 200
 
-
-    return jsonify(response_body), 200
-
 @api.route('/users', methods=['GET', 'PUT', 'DELETE'])
 @jwt_required()
 def handle_user():
-    user_id = get_jwt_identity()
+    identity = get_jwt_identity()
+    user_id = identity["id"]
     user = User.query.get(user_id)
     if not user:
         return {"error": "User not found"}, 404
@@ -281,7 +305,7 @@ def handle_office(office_id):
         db.session.commit()
         return {"message": "Office deleted"}, 200
 
-@api.route('/medias', methods=['GET', 'POST'])
+@api.route('/media/<int:patient_id>', methods=['GET'])
 @jwt_required()
 def handle_medias():
     if request.method == 'GET':
@@ -318,7 +342,10 @@ def handle_media(media_id):
         db.session.delete(media)
         db.session.commit()
         return {"message": "Media deleted"}, 200
-
+def handle_media(patient_id):
+    media = Media.query.filter_by(patient_id=patient_id).all()
+    return jsonify([media.minimal_serialize() for media in media]), 200
+    
 
 @api.route('/prescriptions', methods=['GET', 'POST'])
 @jwt_required()

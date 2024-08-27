@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, Enum as SqlEnum, Date
 from sqlalchemy.orm import relationship, declarative_base
 from enum import Enum as PyEnum
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -88,6 +89,9 @@ class Patient(db.Model):
     name_of_pharmacy = db.Column(db.String(50))
     address_of_pharmacy = db.Column(db.String(100))
 
+#Media
+    media = db.relationship("Media", backref="patient", lazy=True)
+
     def serialize(self):
         return {
             "id": self.id,
@@ -108,6 +112,7 @@ class Patient(db.Model):
             "subscription_end_date": self.subscription_end_date,
             "name_of_pharmacy": self.name_of_pharmacy,
             "address_of_pharmacy": self.address_of_pharmacy,
+            "media": [m.serialize() for m in self.media]
         }
 
     def __repr__(self):
@@ -116,15 +121,26 @@ class Patient(db.Model):
 
 class Media(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String(300))
-    patient_id = db.Column(db.Integer, db.ForeignKey("patient.id"))
-    patient = db.relationship(Patient)
+    patient_id = db.Column(db.Integer, db.ForeignKey("patient.id"), nullable=False)
+    document_name = db.Column(db.String(255), nullable=False)
+    document_url = db.Column(db.String(300), nullable=False)
+    document_type = db.Column(db.String(50), nullable=False)
+    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def serialize(self):
         return{
             "id": self.id,
-            "url": self.url,
-            "patient id": self.patient_id
+            "patient id": self.patient_id,
+            "document name": self.document_name,
+            "document type": self.document_type,
+            "url": self.document_url,
+            "upload date": self.upload_date.isoformat()
+        }
+    
+    def minimal_serialize(self):
+        return{
+            "document_type": self.document_type,
+            "url": self.document_url
         }
 
     def __repr__(self):

@@ -26,7 +26,7 @@ export const PrescriptionForm = () => {
 
     if (!patient) {
       alert("There is no patient to add prescriptions to");
-      navigate("/search");
+      navigate("/protected/search");
     }
   }, [store.patient]);
 

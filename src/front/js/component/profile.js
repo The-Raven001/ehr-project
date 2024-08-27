@@ -11,17 +11,38 @@ export const Profile = () => {
     navigate("/");
   };
 
+  const handleEditProfile = () => {
+    navigate("/protected/edit-profile");
+  };
+
+  const handleSearch = () => {
+    navigate("/protected/search");
+  };
+
+  const handleCreateChart = () => {
+    navigate("/protected/create-chart");
+  };
+
   return (
     <div className="d-flex justify-content-center ">
       <div className="bg-light d-flex justify-content-center align-items-center flex-column mt-5 maindiv w-25">
         <h1>Welcome!</h1>
         <div className="d-flex mb-3">
-          <Link to="/edit-profile" className="me-5">
-            <button className="btn btn-dark profileButton">Edit Profile</button>
-          </Link>
-          <Link to="/search" className="me-2">
-            <button className="btn btn-dark profileButton">Search Chart</button>
-          </Link>
+          <button
+            className="btn btn-dark profileButton me-2"
+            onClick={handleEditProfile}
+          >
+            Edit Profile
+          </button>
+          <button
+            className="btn btn-dark profileButton me-2"
+            onClick={handleCreateChart}
+          >
+            Create Chart
+          </button>
+          <button className="btn btn-dark profileButton" onClick={handleSearch}>
+            Search Chart
+          </button>
         </div>
         <button
           onClick={handleLogout}

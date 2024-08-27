@@ -24,7 +24,7 @@ export const Search = () => {
 
     if (success) {
       alert("Patient found");
-      navigate("/chart");
+      navigate("/protected/chart");
     } else {
       alert("Patient not found");
     }

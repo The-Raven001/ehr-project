@@ -73,7 +73,7 @@ dist/*
 !.eslintrc
 !.env.example
 .now
-src/api/ehr-project1-firebase-adminsdk-3fxp8-514b8fe473.json
+ehr-project1-firebase-adminsdk-3fxp8-eaa54ccf28.json
 
 # backend stuff
 .venv
