@@ -17,15 +17,10 @@ export const Chart = () => {
   const [dob, setDob] = useState("");
   const [insurance, setInsurance] = useState("");
   const [pharmacy, setPharmacy] = useState("");
-  const [documents, setDocuments] = useState({
-    medical: "",
-    lab: "",
-    imaging: "",
-  });
-
+  const [documents, setDocuments] = useState([]);
   const fetchDocuments = async () => {
     const response = await fetch(
-      `${process.env.BACKEND_URL}/api/media/${store.patient.id}`,
+      `${process.env.BACKEND_URL}/api/medias/${store.patient.id}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -37,22 +32,10 @@ export const Chart = () => {
       if (!data) {
         return;
       }
-      const updatedDocuments = { medical: "", lab: "", imaging: "" };
-
-      data.forEach((doc) => {
-        if (doc.document_type === "medical_history") {
-          updatedDocuments.medical = doc.url;
-        } else if (doc.document_type === "lab_results") {
-          updatedDocuments.lab = doc.url;
-        } else if (doc.document_type === "imaging_reports") {
-          updatedDocuments.imaging = doc.url;
-        }
-      });
-
-      setDocuments(updatedDocuments);
+      setDocuments(data);
     }
   };
-
+  console.log(documents);
   useEffect(() => {
     fetchDocuments();
   }, [store.patient]);
@@ -204,6 +187,25 @@ export const Chart = () => {
             </h4>
           </div>
           <ul>
+            {documents && documents.length > 0 ? (
+              documents.map((document) => (
+                <li key={document.id}>
+                  <span>{document.document_name}</span>
+                  <a
+                    className="btn btn-dark"
+                    href={document.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View
+                  </a>
+                </li>
+              ))
+            ) : (
+              <li>No documents available</li>
+            )}
+          </ul>
+          {/* <ul>
             <li>
               <span>Medical History</span>
 
@@ -225,7 +227,7 @@ export const Chart = () => {
                 View
               </a>
             </li>
-          </ul>
+          </ul> */}
         </div>
         <div className="section col-6">
           <h4 className="d-flex justify-content-between">
