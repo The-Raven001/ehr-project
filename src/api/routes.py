@@ -8,7 +8,7 @@ from flask_cors import CORS
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from api.firebase_setup import initialize_firebase, get_firestore_client, get_storage_bucket
 from datetime import datetime
-
+from sqlalchemy.exc import SQLAlchemyError
 api = Blueprint('api', __name__)
 initialize_firebase()
 db_firestore = get_firestore_client()
@@ -28,36 +28,18 @@ def handle_upload(patient_id):
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
 
-    document_type = request.form.get('docType')
-    if not document_type:
-        return jsonify({"error": "No document type provided"}), 400
-
-    valid_document_types = ["medical_history", "lab_results", "imaging_reports"]
-    if document_type not in valid_document_types:
-        return jsonify({"error": "Invalid document type"}), 400
-
     blob = bucket.blob(file.filename)
     blob.upload_from_file(file)
     blob.make_public()
 
-    existing_document = Media.query.filter_by(patient_id=patient_id, document_type=document_type).first()
-
-    if existing_document:
-        existing_document.document_url = blob.public_url
-        existing_document.document_name = file.filename
-        existing_document.upload_date = datetime.utcnow()
-        db.session.commit()
-        return jsonify({"url": blob.public_url, "message": "File uploaded and metadata updated"}), 200
-    else:
-        media_data = Media(
+    media_data = Media(
             patient_id=patient_id,
             document_name=file.filename,
             document_url=blob.public_url,
-            document_type=document_type
         )
-        db.session.add(media_data)
-        db.session.commit()
-        return jsonify({"url": blob.public_url, "message": "File uploaded and metadata saved"}), 200
+    db.session.add(media_data)
+    db.session.commit()
+    return jsonify({"url": blob.public_url, "message": "File uploaded and metadata saved"}), 200
     
 @api.route('/signup', methods=['POST'])
 def handle_signup():
@@ -305,43 +287,8 @@ def handle_office(office_id):
         db.session.commit()
         return {"message": "Office deleted"}, 200
 
-@api.route('/media/<int:patient_id>', methods=['GET'])
+@api.route('/medias/<int:patient_id>', methods=['GET', 'PUT', 'DELETE'])
 @jwt_required()
-def handle_medias():
-    if request.method == 'GET':
-        medias = Media.query.all()
-        return jsonify([media.serialize() for media in medias]), 200
-    if request.method == 'POST':
-        data = request.get_json()
-        new_media = Media(
-            url=data.get('url'),
-            patient_id=data.get('patient_id')
-        )
-        db.session.add(new_media)
-        db.session.commit()
-        return new_media.serialize(), 201
-
-@api.route('/medias/<int:media_id>', methods=['GET', 'PUT', 'DELETE'])
-@jwt_required()
-def handle_media(media_id):
-    media = Media.query.get(media_id)
-    if not media:
-        return jsonify({"error": "Media not found"}), 404
-
-    if request.method == 'GET':
-        return jsonify(media.serialize()), 200
-
-    if request.method == 'PUT':
-        data = request.get_json()
-        media.url = data.get('url')
-        media.patient_id = data.get('patient_id')
-        db.session.commit()
-        return jsonify(media.serialize()), 200
-
-    if request.method == 'DELETE':
-        db.session.delete(media)
-        db.session.commit()
-        return {"message": "Media deleted"}, 200
 def handle_media(patient_id):
     media = Media.query.filter_by(patient_id=patient_id).all()
     return jsonify([media.minimal_serialize() for media in media]), 200

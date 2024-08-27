@@ -124,7 +124,6 @@ class Media(db.Model):
     patient_id = db.Column(db.Integer, db.ForeignKey("patient.id"), nullable=False)
     document_name = db.Column(db.String(255), nullable=False)
     document_url = db.Column(db.String(300), nullable=False)
-    document_type = db.Column(db.String(50), nullable=False)
     upload_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def serialize(self):
@@ -132,14 +131,14 @@ class Media(db.Model):
             "id": self.id,
             "patient id": self.patient_id,
             "document name": self.document_name,
-            "document type": self.document_type,
             "url": self.document_url,
             "upload date": self.upload_date.isoformat()
         }
     
     def minimal_serialize(self):
         return{
-            "document_type": self.document_type,
+            "id": self.id,
+            "document_name": self.document_name,
             "url": self.document_url
         }
 

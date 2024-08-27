@@ -3,22 +3,16 @@ import { Context } from "../store/appContext";
 
 const UploadDocsForm = ({ onUploadComplete }) => {
   const [file, setFile] = useState(null);
-  const [docType, setDocType] = useState("medical_history");
   const { store } = useContext(Context);
 
   const onFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  const onDocTypeChange = (e) => {
-    setDocType(e.target.value);
-  };
-
   const onSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("docType", docType);
 
     try {
       const response = await fetch(
@@ -49,8 +43,6 @@ const UploadDocsForm = ({ onUploadComplete }) => {
 
   return (
     <div className="d-flex flex-column align-items-center bg-light">
-      {/* <h3>Upload File</h3> */}
-      {/* {message && <p>{message}</p>} */}
       <form onSubmit={onSubmit} className="p-3 border rounded">
         <div className="mb-3">
           <label htmlFor="fileInput" className="form-label">
@@ -62,21 +54,6 @@ const UploadDocsForm = ({ onUploadComplete }) => {
             id="fileInput"
             onChange={onFileChange}
           />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="docType" className="form-label">
-            Document Type
-          </label>
-          <select
-            id="docType"
-            className="form-select"
-            value={docType}
-            onChange={onDocTypeChange}
-          >
-            <option value="medical_history">Medical History</option>
-            <option value="lab_results">Lab Results</option>
-            <option value="imaging_reports">Imaging Reports</option>
-          </select>
         </div>
         <div>
           <input
